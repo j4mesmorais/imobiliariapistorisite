@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Wellness/Nature Luxury Theme */
+    --background: 152 30% 12%;
+    --foreground: 60 15% 90%;
+
+    --card: 152 25% 15%;
+    --card-foreground: 60 15% 90%;
+
+    --popover: 152 25% 15%;
+    --popover-foreground: 60 15% 90%;
+
+    --primary: 38 40% 55%; /* Warm Bronze */
+    --primary-foreground: 152 30% 12%;
+
+    --secondary: 152 20% 20%;
+    --secondary-foreground: 60 15% 90%;
+
+    --muted: 152 20% 20%;
+    --muted-foreground: 60 10% 70%;
+
+    --accent: 38 40% 55%;
+    --accent-foreground: 152 30% 12%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 15% 90%;
+
+    --border: 152 20% 25%;
+    --input: 152 20% 25%;
+    --ring: 38 40% 55%;
+
+    --radius: 0.25rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif;
+  }
+
+  section[aria-label='Notifications alt+T'] {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    @apply bg-gold-gradient bg-clip-text text-transparent;
+  }
+
+  .border-gold-subtle {
+    @apply border border-primary/20 hover:border-primary/100 transition-colors duration-400;
+  }
+
+  .duration-400 {
+    transition-duration: 400ms;
+  }
+
+  @keyframes pulse-gold {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(188, 146, 93, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(188, 146, 93, 0);
+    }
+  }
+
+  .animate-pulse-gold {
+    animation: pulse-gold 2s infinite;
+  }
+
+  @keyframes slide-up-fade {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up-fade {
+    animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
