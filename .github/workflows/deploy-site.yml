@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "site/**"
+      - "**"
       - ".github/workflows/deploy-site.yml"
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "site/*"
+          source: "*"
           target: "/tmp/site-deploy"
           strip_components: 0
 
@@ -36,6 +36,6 @@ jobs:
               echo "Container not found!"
               exit 1
             fi
-            tar czf - -C /tmp/site-deploy/site . | docker exec -i "$CONTAINER" tar xzf - -C /usr/local/apache2/htdocs/
+            tar czf - -C /tmp/site-deploy . | docker exec -i "$CONTAINER" tar xzf - -C /usr/local/apache2/htdocs/
             rm -rf /tmp/site-deploy
             echo "Deploy concluído com sucesso!"
