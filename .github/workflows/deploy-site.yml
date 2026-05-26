@@ -1,20 +1,24 @@
 name: Deploy Site
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "**"
-      - ".github/workflows/deploy-site.yml"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Ambiente de deploy'
+        type: choice
+        options:
+          - production
+        default: production
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH
+      - name: Sync files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -24,18 +28,19 @@ jobs:
           target: "/tmp/site-deploy"
           strip_components: 0
 
-      - name: Sync to container
+      - name: Copy to Apache container
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            CONTAINER=$(docker ps --filter name=${{ secrets.CONTAINER_NAME }} --format '{{.ID}}' | head -1)
+            set -e
+            CONTAINER=$(docker ps --filter name=site_site --format '{{.ID}}' | head -1)
             if [ -z "$CONTAINER" ]; then
               echo "Container not found!"
               exit 1
             fi
             tar czf - -C /tmp/site-deploy . | docker exec -i "$CONTAINER" tar xzf - -C /usr/local/apache2/htdocs/
             rm -rf /tmp/site-deploy
-            echo "Deploy concluído com sucesso!"
+            echo "Deploy concluído!"
