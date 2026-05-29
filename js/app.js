@@ -160,26 +160,34 @@ if (contactForm) {
 
             if (error) throw error;
 
-            // 2. Enviar e-mail via SMTP.js (Elastic Email)
-            const emailBody = `
-                <h2>Novo contato do site - Pistori & Associados</h2>
-                <p><strong>Nome:</strong> ${nome}</p>
-                <p><strong>E-mail:</strong> ${email}</p>
-                <p><strong>WhatsApp:</strong> ${whatsapp}</p>
-                <p><strong>Mensagem:</strong> ${mensagem || '(não informada)'}</p>
-                <hr>
-                <p style="color:#999;font-size:12px;">Enviado pelo formulário de contato do site.</p>
-            `;
+            // 2. Enviar e-mail via SMTP.js (Elastic Email) — fallback silencioso
+            try {
+                if (typeof Email !== 'undefined') {
+                    const emailBody = `
+                        <h2>Novo contato do site - Pistori & Associados</h2>
+                        <p><strong>Nome:</strong> ${nome}</p>
+                        <p><strong>E-mail:</strong> ${email}</p>
+                        <p><strong>WhatsApp:</strong> ${whatsapp}</p>
+                        <p><strong>Mensagem:</strong> ${mensagem || '(não informada)'}</p>
+                        <hr>
+                        <p style="color:#999;font-size:12px;">Enviado pelo formulário de contato do site.</p>
+                    `;
 
-            await Email.send({
-                Host: 'smtp.elasticemail.com',
-                Username: 'vendas.pistori@gmail.com',
-                Password: 'abeawtsjseuklqlh',
-                To: 'vendas.pistori@gmail.com',
-                From: 'vendas.pistori@gmail.com',
-                Subject: 'Novo Contato Site — ' + nome,
-                Body: emailBody
-            });
+                    await Email.send({
+                        Host: 'smtp.elasticemail.com',
+                        Username: 'vendas.pistori@gmail.com',
+                        Password: 'abeawtsjseuklqlh',
+                        To: 'vendas.pistori@gmail.com',
+                        From: 'vendas.pistori@gmail.com',
+                        Subject: 'Novo Contato Site — ' + nome,
+                        Body: emailBody
+                    });
+                } else {
+                    console.warn('SMTP.js Email not available — email notification skipped');
+                }
+            } catch (emailErr) {
+                console.warn('Falha ao enviar e-mail (não crítico):', emailErr);
+            }
 
             alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
             contactForm.reset();
