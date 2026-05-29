@@ -156,8 +156,19 @@
                             <input type="text" id="edit-preco" placeholder="Ex: R$ 290.000">
                         </div>
                         <div class="form-group">
-                            <label for="edit-imagem_url">URL da Imagem</label>
-                            <input type="text" id="edit-imagem_url" placeholder="img/nome-da-imagem.jpg">
+                            <label for="edit-imagem_url">Imagem</label>
+                            <div class="image-input-group">
+                                <input type="text" id="edit-imagem_url" placeholder="URL da imagem ou selecione do NextCloud" readonly>
+                                <button type="button" id="btn-select-image" class="btn btn-outline btn-sm" title="Selecionar do NextCloud">
+                                    <i class="ri-image-line"></i> NextCloud
+                                </button>
+                            </div>
+                            <div id="image-preview" class="image-preview" style="display:none;">
+                                <img src="" alt="Preview">
+                                <button type="button" id="btn-remove-image" class="image-preview-remove" title="Remover imagem">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="edit-latitude">Latitude</label>
@@ -180,6 +191,29 @@
                     <button type="submit" id="save-btn" class="btn btn-primary">Salvar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- MODAL — Image Selector (NextCloud)        -->
+    <!-- ========================================= -->
+    <div id="image-selector-overlay" class="modal-overlay">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h2>Selecionar Imagem do NextCloud</h2>
+                <button id="image-selector-close" class="modal-close" aria-label="Fechar">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="image-selector-status" class="img-selector-status">
+                    <div class="img-loading"><i class="ri-loader-4-line ri-spin"></i> Carregando imagens...</div>
+                </div>
+                <div id="image-selector-grid" class="img-selector-grid"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="image-selector-cancel" class="btn btn-outline">Cancelar</button>
+            </div>
         </div>
     </div>
 

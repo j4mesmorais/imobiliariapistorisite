@@ -336,6 +336,223 @@ function formatDate(iso) {
     }
 }
 
+/* =========================================
+   NextCloud Image Selector
+   ========================================= */
+
+const nc = ADMIN_CONFIG.nextcloud;
+const ncAuth = btoa(nc.user + ':' + nc.pass);
+
+// DOM refs for image selector
+const btnSelectImage = document.getElementById('btn-select-image');
+const imagePreview = document.getElementById('image-preview');
+const imagePreviewImg = imagePreview?.querySelector('img');
+const btnRemoveImage = document.getElementById('btn-remove-image');
+const imgSelectorOverlay = document.getElementById('image-selector-overlay');
+const imgSelectorGrid = document.getElementById('image-selector-grid');
+const imgSelectorStatus = document.getElementById('image-selector-status');
+const imgSelectorClose = document.getElementById('image-selector-close');
+const imgSelectorCancel = document.getElementById('image-selector-cancel');
+const editImagemUrl = document.getElementById('edit-imagem_url');
+
+let selectedImageUrl = '';
+
+/** Fetch image list from NextCloud WebDAV */
+async function listNextCloudImages() {
+    const response = await fetch(nc.webdavUrl, {
+        method: 'PROPFIND',
+        headers: {
+            'Depth': '1',
+            'Authorization': 'Basic ' + ncAuth
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error('NextCloud PROPFIND falhou: HTTP ' + response.status);
+    }
+
+    const xml = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xml, 'text/xml');
+
+    // Parse all href elements
+    const hrefs = [];
+    doc.querySelectorAll('href, d\\:href').forEach(el => {
+        const href = el.textContent.trim();
+        if (href === nc.webdavUrl || href === nc.webdavUrl.replace(/\/$/, '') + '/') return;
+        hrefs.push(href);
+    });
+
+    // Fallback: parse with namespace
+    if (hrefs.length === 0) {
+        const allElements = doc.getElementsByTagName('*');
+        for (const el of allElements) {
+            if (el.tagName.toLowerCase().endsWith('href')) {
+                const href = el.textContent.trim();
+                if (href === nc.webdavUrl || href === nc.webdavUrl.replace(/\/$/, '') + '/') continue;
+                hrefs.push(href);
+            }
+        }
+    }
+
+    // Filter for image files only
+    const imgExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg'];
+    const images = hrefs
+        .filter(href => {
+            const lower = href.toLowerCase();
+            return imgExtensions.some(ext => lower.endsWith(ext));
+        })
+        .map(href => {
+            // Extract filename from href
+            const parts = href.replace(/\/$/, '').split('/');
+            const filename = parts[parts.length - 1];
+            // Decode URL-encoded filename
+            const decoded = decodeURIComponent(filename);
+            const fullUrl = nc.baseUrl + encodeURIComponent(decoded);
+            return { filename: decoded, url: fullUrl };
+        });
+
+    // Remove duplicates
+    const seen = new Set();
+    return images.filter(img => {
+        if (seen.has(img.filename)) return false;
+        seen.add(img.filename);
+        return true;
+    });
+}
+
+/** Render image grid in the selector modal */
+function renderImageGrid(images) {
+    imgSelectorGrid.innerHTML = '';
+    imgSelectorStatus.style.display = 'none';
+
+    if (images.length === 0) {
+        imgSelectorStatus.style.display = 'block';
+        imgSelectorStatus.innerHTML = `
+            <div class="img-empty">
+                <i class="ri-folder-image-line"></i>
+                <span>Nenhuma imagem encontrada em /Documents/Site/Imagens/</span>
+                <span style="font-size:0.8rem;opacity:0.6;">Formatos aceitos: JPG, PNG, WebP, GIF</span>
+            </div>
+        `;
+        return;
+    }
+
+    images.forEach(img => {
+        const item = document.createElement('div');
+        item.className = 'img-selector-item';
+        if (selectedImageUrl === img.url) item.classList.add('selected');
+
+        item.innerHTML = `
+            <img src="proxy-image.php?file=${encodeURIComponent(img.filename)}" alt="${img.filename}" loading="lazy">
+            <div class="img-check"><i class="ri-check-line"></i></div>
+            <div class="img-name">${escHtml(img.filename)}</div>
+        `;
+
+        item.addEventListener('click', () => {
+            // Deselect all
+            imgSelectorGrid.querySelectorAll('.img-selector-item').forEach(el => el.classList.remove('selected'));
+            // Select this one
+            item.classList.add('selected');
+            selectedImageUrl = img.url;
+        });
+
+        imgSelectorGrid.appendChild(item);
+    });
+}
+
+/** Open the image selector modal */
+async function openImageSelector() {
+    imgSelectorOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    imgSelectorGrid.innerHTML = '';
+    imgSelectorStatus.style.display = 'block';
+    imgSelectorStatus.innerHTML = '<div class="img-loading"><i class="ri-loader-4-line ri-spin"></i> Carregando imagens...</div>';
+
+    try {
+        const images = await listNextCloudImages();
+        renderImageGrid(images);
+    } catch (err) {
+        console.error('Erro ao carregar imagens do NextCloud:', err);
+        imgSelectorStatus.style.display = 'block';
+        imgSelectorStatus.innerHTML = `
+            <div class="img-error">
+                <i class="ri-error-warning-line" style="font-size:2rem;display:block;margin-bottom:8px;"></i>
+                Erro ao carregar imagens: ${escHtml(err.message)}
+                <br>
+                <button class="retry-btn" onclick="window.retryLoadImages()">Tentar Novamente</button>
+            </div>
+        `;
+    }
+}
+
+window.retryLoadImages = openImageSelector;
+
+function closeImageSelector() {
+    imgSelectorOverlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function confirmImageSelection() {
+    if (selectedImageUrl) {
+        editImagemUrl.value = selectedImageUrl;
+        showImagePreview(selectedImageUrl);
+    }
+    closeImageSelector();
+}
+
+function showImagePreview(url) {
+    if (!url) {
+        imagePreview.style.display = 'none';
+        return;
+    }
+    imagePreviewImg.src = url;
+    imagePreview.style.display = 'block';
+}
+
+// Event listeners for image selector
+if (btnSelectImage) {
+    btnSelectImage.addEventListener('click', openImageSelector);
+}
+if (imgSelectorClose) {
+    imgSelectorClose.addEventListener('click', confirmImageSelection);
+}
+if (imgSelectorCancel) {
+    imgSelectorCancel.addEventListener('click', closeImageSelector);
+}
+if (imgSelectorOverlay) {
+    imgSelectorOverlay.addEventListener('click', (e) => {
+        if (e.target === imgSelectorOverlay) confirmImageSelection();
+    });
+}
+if (btnRemoveImage) {
+    btnRemoveImage.addEventListener('click', () => {
+        editImagemUrl.value = '';
+        selectedImageUrl = '';
+        imagePreview.style.display = 'none';
+    });
+}
+
+// Reset selectedImageUrl when modal opens/closes for create/edit
+const origOpenCreateModal = window.openCreateModal;
+window.openCreateModal = function() {
+    selectedImageUrl = '';
+    imagePreview.style.display = 'none';
+    origOpenCreateModal();
+};
+
+// Patch openEditModal to also reset image selector state
+const origOpenEditModal = openEditModal;
+openEditModal = async function(id) {
+    selectedImageUrl = '';
+    await origOpenEditModal(id);
+    // Show preview if there's an existing image URL
+    const currentUrl = editImagemUrl?.value;
+    if (currentUrl) {
+        showImagePreview(currentUrl);
+    }
+};
+
 /* ---------- Start ---------- */
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof ADMIN_CONFIG !== 'undefined' && ADMIN_CONFIG.devMode) {
