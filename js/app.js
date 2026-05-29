@@ -185,7 +185,7 @@ if (contactForm) {
             contactForm.reset();
         } catch (err) {
             console.error('Erro ao enviar formulário:', err);
-            alert('Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.');
+            alert(err?.message || err?.error_description || 'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.');
         } finally {
             btn.innerHTML = originalText;
             btn.disabled = false;
