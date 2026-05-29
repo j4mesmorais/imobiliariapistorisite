@@ -1,0 +1,541 @@
+/* =========================================
+   ADMIN — Dark theme (matches site theme)
+   ========================================= */
+
+:root {
+    --background: #0d1217;
+    --card: #141b22;
+    --card-hover: #1a232c;
+    --border: #324452;
+    --foreground: #e6e6e6;
+    --muted-foreground: #8899aa;
+    --gold: #D4AF37;
+    --gold-gradient: linear-gradient(135deg, #D4AF37 0%, #F1D592 50%, #D4AF37 100%);
+    --gold-glow: 0 0 15px rgba(212, 175, 55, 0.4);
+    --primary: #124d5b;
+    --danger: #ef4444;
+    --success: #22c55e;
+    --radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ---------- Login Screen ---------- */
+#login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 40px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 2px solid var(--gold);
+}
+
+.login-card h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.login-card p {
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+}
+
+/* ---------- Dashboard ---------- */
+#dashboard {
+    display: none;
+}
+
+.admin-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.admin-brand img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.admin-user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-user span {
+    font-size: 0.85rem;
+    color: var(--muted-foreground);
+}
+
+/* ---------- Container ---------- */
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+/* ---------- Tabs ---------- */
+.tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 24px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    background: transparent;
+    color: var(--muted-foreground);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    color: var(--foreground);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    background: var(--gold-gradient);
+    color: #000;
+    font-weight: 600;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ---------- Table Controls ---------- */
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.table-controls h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: white;
+}
+
+/* ---------- Tables ---------- */
+.table-wrapper {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted-foreground);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+td {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(50, 68, 82, 0.4);
+    color: var(--foreground);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 20px;
+    height: 40px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--gold-gradient);
+    color: #000;
+}
+
+.btn-primary:hover {
+    box-shadow: var(--gold-glow);
+    filter: brightness(1.1);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    filter: none;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--border);
+}
+
+.btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    filter: brightness(1.2);
+}
+
+.btn-danger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-sm {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 0.8rem;
+}
+
+.btn-table {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background: transparent;
+    color: var(--muted-foreground);
+}
+
+.btn-table.btn-edit:hover {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold);
+}
+
+.btn-table.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+}
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--muted-foreground);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+}
+
+/* ---------- Form ---------- */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Montserrat', sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gold);
+    cursor: pointer;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+.checkbox-group label {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/* ---------- Delete Confirm ---------- */
+.delete-confirm-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.delete-confirm-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: white;
+}
+
+.delete-confirm-box p {
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+}
+
+.delete-confirm-box .modal-footer {
+    border-top: none;
+    padding: 0;
+    justify-content: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 0 16px;
+    }
+
+    .admin-container {
+        padding: 20px 16px;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .login-card {
+        padding: 32px 24px;
+    }
+
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    th, td {
+        padding: 10px 12px;
+    }
+}

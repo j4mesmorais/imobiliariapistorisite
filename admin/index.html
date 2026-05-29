@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo — Pistori & Associados</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- ========================================= -->
+    <!-- LOGIN SCREEN                              -->
+    <!-- ========================================= -->
+    <div id="login-screen">
+        <div class="login-card">
+            <img src="../img/logo_pa.jpg" alt="Pistori & Associados" class="login-logo">
+            <h1>Painel Administrativo</h1>
+            <p>Faça login com sua conta autorizada para gerenciar o site.</p>
+            <button id="login-btn" class="btn btn-primary" style="width:100%; height:48px; font-size:1rem;">
+                <i class="ri-lock-line"></i> Entrar
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- DASHBOARD (authenticated)                 -->
+    <!-- ========================================= -->
+    <div id="dashboard">
+
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-brand">
+                <img src="../img/logo_pa.jpg" alt="Pistori & Associados">
+                Pistori & Associados
+            </div>
+            <div class="admin-user">
+                <i class="ri-user-line" style="color:var(--gold);"></i>
+                <span id="user-name">Admin</span>
+                <button id="logout-btn" class="btn btn-outline btn-sm">
+                    <i class="ri-logout-circle-line"></i> Sair
+                </button>
+            </div>
+        </header>
+
+        <!-- Container -->
+        <div class="admin-container">
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tab-contatos">
+                    <i class="ri-mail-line"></i> Contatos
+                </button>
+                <button class="tab-btn" data-tab="tab-imoveis">
+                    <i class="ri-building-line"></i> Imóveis
+                </button>
+            </div>
+
+            <!-- Tab: Contatos -->
+            <div id="tab-contatos" class="tab-content active">
+                <div class="table-controls">
+                    <h2>Leads do Formulário de Contato</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>WhatsApp</th>
+                                <th>Mensagem</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contatos-body">
+                            <tr>
+                                <td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">
+                                    Carregando...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Imóveis -->
+            <div id="tab-imoveis" class="tab-content">
+                <div class="table-controls">
+                    <h2>Imóveis Cadastrados</h2>
+                    <button class="btn btn-primary" onclick="window.openCreateModal()">
+                        <i class="ri-add-line"></i> Novo Imóvel
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Subtítulo</th>
+                                <th>Preço</th>
+                                <th>Ativo</th>
+                                <th style="width:100px;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="imoveis-body">
+                            <tr>
+                                <td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">
+                                    Carregando...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- MODAL — Criar/Editar Imóvel              -->
+    <!-- ========================================= -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">Novo Imóvel</h2>
+                <button id="modal-close" class="modal-close" aria-label="Fechar">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <form id="imovel-form">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label for="edit-titulo">Título</label>
+                            <input type="text" id="edit-titulo" placeholder="Ex: Quintas do Cerrado" required>
+                        </div>
+                        <div class="form-group full">
+                            <label for="edit-subtitulo">Subtítulo</label>
+                            <input type="text" id="edit-subtitulo" placeholder="Ex: Chácaras de 1000 m²">
+                        </div>
+                        <div class="form-group full">
+                            <label for="edit-resumo">Descrição / Resumo</label>
+                            <textarea id="edit-resumo" placeholder="Descrição do imóvel..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-preco">Preço</label>
+                            <input type="text" id="edit-preco" placeholder="Ex: R$ 290.000">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-imagem_url">URL da Imagem</label>
+                            <input type="text" id="edit-imagem_url" placeholder="img/nome-da-imagem.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-latitude">Latitude</label>
+                            <input type="number" step="any" id="edit-latitude" placeholder="-16.6769">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-longitude">Longitude</label>
+                            <input type="number" step="any" id="edit-longitude" placeholder="-49.6232">
+                        </div>
+                        <div class="form-group full">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="edit-ativo" checked>
+                                <label for="edit-ativo">Imóvel ativo (aparece no site)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel-btn" class="btn btn-outline">Cancelar</button>
+                    <button type="submit" id="save-btn" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- DELETE CONFIRMATION                       -->
+    <!-- ========================================= -->
+    <div id="delete-confirm-overlay" class="modal-overlay">
+        <div class="delete-confirm-box">
+            <h3>Excluir Imóvel</h3>
+            <p>Tem certeza que deseja excluir este imóvel? Esta ação não pode ser desfeita.</p>
+            <div class="modal-footer">
+                <button id="delete-confirm-no" class="btn btn-outline">Cancelar</button>
+                <button id="delete-confirm-yes" class="btn btn-danger">Sim, Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/admin.js"></script>
+</body>
+</html>
