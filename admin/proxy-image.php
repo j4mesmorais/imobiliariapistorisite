@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /* =========================================
    Proxy Image — NextCloud WebDAV

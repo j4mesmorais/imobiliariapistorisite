@@ -45,7 +45,7 @@ function renderProperties(properties) {
     
     propertiesContainer.innerHTML = properties.map((prop, index) => `
         <div class="property-card reveal" style="transition-delay: ${index * 150}ms">
-            <img src="${prop.imagem_url ? (prop.imagem_url.startsWith('http') ? prop.imagem_url : '/img/' + prop.imagem_url.split('/').pop()) : 'https://img.usecurling.com/p/800/600?q=modern%20house'}" alt="${prop.titulo}" class="property-img">
+            <img src="${prop.imagem_url ? (prop.imagem_url.startsWith('http') && !prop.imagem_url.startsWith('proxy-image.php') ? prop.imagem_url : '/admin/' + prop.imagem_url) : 'https://img.usecurling.com/p/800/600?q=modern%20house'}" alt="${prop.titulo}" class="property-img">
             <div class="property-content">
                 <span class="property-location" style="color: var(--gold); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.1em; margin-bottom: 4px; display: block;">${prop.subtitulo || ''}</span>
                 <h3 class="property-title">${prop.titulo}</h3>

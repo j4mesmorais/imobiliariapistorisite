@@ -23,7 +23,6 @@ const tabBtns = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
 const contatosBody = document.getElementById('contatos-body');
 const imoveisBody = document.getElementById('imoveis-body');
-const modalOverlay = document.getElementById('modal-overlay');
 const modalTitle = document.getElementById('modal-title');
 const imovelForm = document.getElementById('imovel-form');
 const modalClose = document.getElementById('modal-close');
@@ -82,6 +81,32 @@ tabBtns.forEach(btn => {
     });
 });
 
+/* ---------- Toast notifications ---------- */
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const icons = { success: 'ri-checkbox-circle-line', error: 'ri-close-circle-line', info: 'ri-information-line' };
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.innerHTML = '<i class="' + (icons[type] || icons.info) + '"></i>'
+        + '<span>' + escHtml(message) + '</span>'
+        + '<button class="toast-close" onclick="this.parentElement.remove()">✕</button>';
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.animation = 'toastOut 0.3s ease-in forwards';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+/* ---------- Result count helper ---------- */
+function updateResultCount(id, count) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = count + ' registro' + (count !== 1 ? 's' : '');
+}
+
 /* ---------- Contatos (read-only) ---------- */
 async function loadContatos() {
     contatosBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">Carregando...</td></tr>';
@@ -89,6 +114,7 @@ async function loadContatos() {
         const data = await supabaseRequest('GET', '/rest/v1/formcontsite?order=created_at.desc&limit=500');
         if (!data || data.length === 0) {
             contatosBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">Nenhum contato encontrado.</td></tr>';
+            updateResultCount('contatos-count', 0);
             return;
         }
         contatosBody.innerHTML = data.map(c => `
@@ -100,22 +126,30 @@ async function loadContatos() {
                 <td style="white-space:nowrap;font-size:0.8rem;">${formatDate(c.created_at)}</td>
             </tr>
         `).join('');
+        updateResultCount('contatos-count', data.length);
     } catch (err) {
         contatosBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:#ef4444;">Erro ao carregar: ' + escHtml(err.message) + '</td></tr>';
     }
 }
 
 /* ---------- Imóveis (CRUD) ---------- */
+function renderThumb(url) {
+    if (!url) return '<div class="thumb-placeholder"><i class="ri-image-line"></i></div>';
+    return `<img class="thumb-img" src="${url}" alt="" loading="lazy">`;
+}
+
 async function loadImoveis() {
-    imoveisBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">Carregando...</td></tr>';
+    imoveisBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Carregando...</td></tr>';
     try {
         const data = await supabaseRequest('GET', '/rest/v1/imoveis?order=titulo.asc');
         if (!data || data.length === 0) {
-            imoveisBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">Nenhum imóvel cadastrado.</td></tr>';
+            imoveisBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Nenhum imóvel cadastrado.</td></tr>';
+            updateResultCount('imoveis-count', 0);
             return;
         }
         imoveisBody.innerHTML = data.map(p => `
             <tr>
+                <td>${renderThumb(p.imagem_url)}</td>
                 <td><strong>${escHtml(p.titulo)}</strong></td>
                 <td>${escHtml(p.subtitulo || '-')}</td>
                 <td>${escHtml(p.preco || 'A consultar')}</td>
@@ -126,6 +160,7 @@ async function loadImoveis() {
                 </td>
             </tr>
         `).join('');
+        updateResultCount('imoveis-count', data.length);
 
         // Attach edit events
         imoveisBody.querySelectorAll('.btn-edit').forEach(btn => {
@@ -135,11 +170,14 @@ async function loadImoveis() {
             btn.addEventListener('click', () => openDeleteConfirm(parseInt(btn.dataset.id)));
         });
     } catch (err) {
-        imoveisBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:#ef4444;">Erro ao carregar: ' + escHtml(err.message) + '</td></tr>';
+        imoveisBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#ef4444;">Erro ao carregar: ' + escHtml(err.message) + '</td></tr>';
     }
 }
 
-/* ---------- Modal CRUD ---------- */
+/* ---------- Slide Panel CRUD ---------- */
+const slidePanel = document.getElementById('slide-panel');
+const slidePanelOverlay = document.getElementById('slide-panel-overlay');
+
 async function openEditModal(id) {
     editingId = id;
     modalTitle.textContent = 'Editar Imóvel';
@@ -158,13 +196,22 @@ async function openEditModal(id) {
         document.getElementById('edit-longitude').value = item.longitude || '';
         document.getElementById('edit-imagem_url').value = item.imagem_url || '';
         document.getElementById('edit-ativo').checked = item.ativo !== false;
+
+        // Show preview if there's an existing image
+        const currentUrl = item.imagem_url;
+        if (currentUrl) {
+            showImagePreview(currentUrl);
+        } else {
+            imagePreview.style.display = 'none';
+        }
     } catch (err) {
-        alert('Erro ao carregar imóvel: ' + err.message);
+        showToast('Erro ao carregar imóvel: ' + err.message, 'error');
         closeModal();
         return;
     }
 
-    modalOverlay.classList.add('active');
+    slidePanel.classList.add('open');
+    slidePanelOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
@@ -174,20 +221,24 @@ function openCreateModal() {
     saveBtn.textContent = 'Criar';
     imovelForm.reset();
     document.getElementById('edit-ativo').checked = true;
-    modalOverlay.classList.add('active');
+    selectedImageUrl = '';
+    imagePreview.style.display = 'none';
+    slidePanel.classList.add('open');
+    slidePanelOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
-    modalOverlay.classList.remove('active');
+    slidePanel.classList.remove('open');
+    slidePanelOverlay.classList.remove('active');
     document.body.style.overflow = 'auto';
     editingId = null;
 }
 
 modalClose.addEventListener('click', closeModal);
 cancelBtn.addEventListener('click', closeModal);
-modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) closeModal();
+slidePanelOverlay.addEventListener('click', (e) => {
+    if (e.target === slidePanelOverlay) closeModal();
 });
 
 imovelForm.addEventListener('submit', async (e) => {
@@ -213,9 +264,10 @@ imovelForm.addEventListener('submit', async (e) => {
             await supabaseRequest('POST', '/rest/v1/imoveis', payload);
         }
         closeModal();
+        showToast(editingId ? 'Imóvel atualizado com sucesso.' : 'Imóvel criado com sucesso.', 'success');
         loadImoveis();
     } catch (err) {
-        alert('Erro ao salvar: ' + err.message);
+        showToast('Erro ao salvar: ' + err.message, 'error');
     } finally {
         saveBtn.disabled = false;
         saveBtn.textContent = editingId ? 'Salvar' : 'Criar';
@@ -234,10 +286,11 @@ deleteConfirmYes.addEventListener('click', async () => {
     deleteConfirmYes.textContent = 'Excluindo...';
     try {
         await supabaseRequest('DELETE', '/rest/v1/imoveis?id=eq.' + deletingId);
+        showToast('Imóvel excluído com sucesso.', 'success');
         deleteConfirmOverlay.classList.remove('active');
         loadImoveis();
     } catch (err) {
-        alert('Erro ao excluir: ' + err.message);
+        showToast('Erro ao excluir: ' + err.message, 'error');
     } finally {
         deleteConfirmYes.disabled = false;
         deleteConfirmYes.textContent = 'Sim, Excluir';
@@ -340,9 +393,6 @@ function formatDate(iso) {
    NextCloud Image Selector
    ========================================= */
 
-const nc = ADMIN_CONFIG.nextcloud;
-const ncAuth = btoa(nc.user + ':' + nc.pass);
-
 // DOM refs for image selector
 const btnSelectImage = document.getElementById('btn-select-image');
 const imagePreview = document.getElementById('image-preview');
@@ -357,68 +407,17 @@ const editImagemUrl = document.getElementById('edit-imagem_url');
 
 let selectedImageUrl = '';
 
-/** Fetch image list from NextCloud WebDAV */
+/** Fetch image list from NextCloud via PHP proxy */
 async function listNextCloudImages() {
-    const response = await fetch(nc.webdavUrl, {
-        method: 'PROPFIND',
-        headers: {
-            'Depth': '1',
-            'Authorization': 'Basic ' + ncAuth
-        }
-    });
+    const response = await fetch('proxy-list.php');
 
     if (!response.ok) {
-        throw new Error('NextCloud PROPFIND falhou: HTTP ' + response.status);
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || 'HTTP ' + response.status);
     }
 
-    const xml = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xml, 'text/xml');
-
-    // Parse all href elements
-    const hrefs = [];
-    doc.querySelectorAll('href, d\\:href').forEach(el => {
-        const href = el.textContent.trim();
-        if (href === nc.webdavUrl || href === nc.webdavUrl.replace(/\/$/, '') + '/') return;
-        hrefs.push(href);
-    });
-
-    // Fallback: parse with namespace
-    if (hrefs.length === 0) {
-        const allElements = doc.getElementsByTagName('*');
-        for (const el of allElements) {
-            if (el.tagName.toLowerCase().endsWith('href')) {
-                const href = el.textContent.trim();
-                if (href === nc.webdavUrl || href === nc.webdavUrl.replace(/\/$/, '') + '/') continue;
-                hrefs.push(href);
-            }
-        }
-    }
-
-    // Filter for image files only
-    const imgExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg'];
-    const images = hrefs
-        .filter(href => {
-            const lower = href.toLowerCase();
-            return imgExtensions.some(ext => lower.endsWith(ext));
-        })
-        .map(href => {
-            // Extract filename from href
-            const parts = href.replace(/\/$/, '').split('/');
-            const filename = parts[parts.length - 1];
-            // Decode URL-encoded filename
-            const decoded = decodeURIComponent(filename);
-            const fullUrl = nc.baseUrl + encodeURIComponent(decoded);
-            return { filename: decoded, url: fullUrl };
-        });
-
-    // Remove duplicates
-    const seen = new Set();
-    return images.filter(img => {
-        if (seen.has(img.filename)) return false;
-        seen.add(img.filename);
-        return true;
-    });
+    const images = await response.json();
+    return images;
 }
 
 /** Render image grid in the selector modal */
@@ -454,7 +453,8 @@ function renderImageGrid(images) {
             imgSelectorGrid.querySelectorAll('.img-selector-item').forEach(el => el.classList.remove('selected'));
             // Select this one
             item.classList.add('selected');
-            selectedImageUrl = img.url;
+            // Save as proxy URL instead of direct WebDAV URL
+            selectedImageUrl = 'proxy-image.php?file=' + encodeURIComponent(img.filename);
         });
 
         imgSelectorGrid.appendChild(item);
@@ -533,25 +533,6 @@ if (btnRemoveImage) {
     });
 }
 
-// Reset selectedImageUrl when modal opens/closes for create/edit
-const origOpenCreateModal = window.openCreateModal;
-window.openCreateModal = function() {
-    selectedImageUrl = '';
-    imagePreview.style.display = 'none';
-    origOpenCreateModal();
-};
-
-// Patch openEditModal to also reset image selector state
-const origOpenEditModal = openEditModal;
-openEditModal = async function(id) {
-    selectedImageUrl = '';
-    await origOpenEditModal(id);
-    // Show preview if there's an existing image URL
-    const currentUrl = editImagemUrl?.value;
-    if (currentUrl) {
-        showImagePreview(currentUrl);
-    }
-};
 
 /* ---------- Start ---------- */
 document.addEventListener('DOMContentLoaded', () => {

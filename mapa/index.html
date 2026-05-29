@@ -79,7 +79,9 @@
                     price: p.preco,
                     lat: p.latitude,
                     lng: p.longitude,
-                    image: p.imagem_url,
+                    image: p.imagem_url
+                        ? (p.imagem_url.startsWith('http') && !p.imagem_url.startsWith('proxy-image.php') ? p.imagem_url : '/admin/' + p.imagem_url)
+                        : 'https://img.usecurling.com/p/400/300?q=real%20estate',
                     link: p.links?.find(l => l.texto === 'Site')?.url || '#',
                     whatsapp: p.links?.find(l => l.texto === 'WhatsApp')?.url?.replace('https://wa.me/', '') || ''
                 }));
