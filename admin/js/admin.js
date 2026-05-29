@@ -340,7 +340,7 @@ function formatDate(iso) {
 document.addEventListener('DOMContentLoaded', () => {
     // Load keycloak JS from CDN then init
     const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/keycloak-js@26/dist/keycloak.min.js';
+    script.src = 'https://cdn.jsdelivr.net/npm/keycloak-js/dist/keycloak.min.js';
     script.onload = initKeycloak;
     script.onerror = () => {
         loginScreen.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Erro ao carregar Keycloak. Verifique sua conexão.</div>';
