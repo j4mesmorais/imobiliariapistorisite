@@ -21,7 +21,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- Styles -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mapa-section.css">
 </head>
 <body>
 
@@ -37,6 +39,7 @@
                 <a href="#inicio" class="nav-link">Início</a>
                 <a href="#imoveis" class="nav-link">Imóveis</a>
                 <a href="#sobre" class="nav-link">Sobre Nós</a>
+                <a href="#mapa-section" class="nav-link">Mapa</a>
                 <a href="#contato" class="nav-link">Contato</a>
                 <a href="#contato" class="btn btn-primary" style="height: 2.8rem; padding: 0 1.5rem; font-size: 0.9rem;">Falar com Assessoria</a>
             </nav>
@@ -54,6 +57,7 @@
         <a href="#inicio" class="nav-link">Início</a>
         <a href="#imoveis" class="nav-link">Imóveis</a>
         <a href="#sobre" class="nav-link">Sobre Nós</a>
+        <a href="#mapa-section" class="nav-link">Mapa</a>
         <a href="#contato" class="nav-link">Contato</a>
         <a href="#contato" class="btn btn-primary">Fale Conosco</a>
     </div>
@@ -112,6 +116,36 @@
                     <li><div class="check-icon"><i class="ri-check-line"></i></div> <span>Assessoria jurídica e administrativa completa</span></li>
                     <li><div class="check-icon"><i class="ri-check-line"></i></div> <span>Curadoria criteriosa de imóveis de alto padrão</span></li>
                 </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section id="mapa-section">
+        <div class="mapa-label">
+            <h2>Imóveis no <span>Mapa</span></h2>
+        </div>
+
+        <!-- Floating Card -->
+        <div id="propertyCardMap" class="property-card hidden">
+            <button class="card-close">✕</button>
+            <img id="cardImageMap">
+            <h2 id="cardTitleMap"></h2>
+            <p id="cardDescMap"></p>
+            <p id="cardPriceMap"></p>
+            <a id="cardLinkMap" class="btn">Mais Informações</a>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mapa-search">
+            <input type="text" id="searchInputMap" placeholder="Pesquisar imóvel..." />
+        </div>
+
+        <!-- Map + List Layout -->
+        <div class="mapa-layout">
+            <div id="mapHome"></div>
+            <div class="mapa-list" id="mapList">
+                <section id="productListMap" class="product-list"></section>
             </div>
         </div>
     </section>
@@ -203,6 +237,8 @@
     </a>
 
     <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="js/mapa-section.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
