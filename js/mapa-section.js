@@ -6,8 +6,8 @@
 (function () {
     'use strict';
 
-    const SUPABASE_URL = 'https://uowelimfpijhjwjwqkyk.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_0bJhjtXlNL0-d5cT2c3J2A_7hbwC5Ox';
+    const SUPABASE_URL = 'https://supabase.imobiliariapistori.com.br';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
 
     // DOM refs
     const mapContainer = document.getElementById('mapHome');
