@@ -173,10 +173,10 @@ if (contactForm) {
 
             await Email.send({
                 Host: 'smtp.elasticemail.com',
-                Username: 'vendaspistori@gmail.com',
+                Username: 'vendas.pistori@gmail.com',
                 Password: 'abeawtsjseuklqlh',
-                To: 'vendaspistori@gmail.com',
-                From: 'vendaspistori@gmail.com',
+                To: 'vendas.pistori@gmail.com',
+                From: 'vendas.pistori@gmail.com',
                 Subject: 'Novo Contato Site — ' + nome,
                 Body: emailBody
             });
