@@ -1,9 +1,8 @@
-const SUPABASE_URL = 'https://uowelimfpijhjwjwqkyk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_0bJhjtXlNL0-d5cT2c3J2A_7hbwC5Ox...'; // Usei a chave parcial para segurança, mas vou colocar a completa no código final ou pedir ao usuário se necessário. 
-// Na verdade, eu tenho a chave completa do .env anterior.
+const SUPABASE_URL = 'https://supabase.imobiliariapistori.com.br';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
 
-const supabaseUrl = 'https://uowelimfpijhjwjwqkyk.supabase.co';
-const supabaseKey = 'sb_publishable_0bJhjtXlNL0-d5cT2c3J2A_7hbwC5Ox'; // Chave completa encontrada no .env
+const supabaseUrl = SUPABASE_URL;
+const supabaseKey = SUPABASE_ANON_KEY;
 
 // @ts-ignore
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
@@ -133,7 +132,7 @@ document.querySelectorAll('.mobile-nav .nav-link').forEach(link => {
     });
 });
 
-// Form Submission — Supabase
+// Form Submission — Supabase + Email
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -144,17 +143,43 @@ if (contactForm) {
         btn.disabled = true;
 
         const formData = new FormData(contactForm);
+        const nome = formData.get('nome');
+        const email = formData.get('email');
+        const whatsapp = formData.get('whatsapp');
+        const mensagem = formData.get('mensagem') || '';
 
         try {
+            // 1. Salvar no Supabase
             const { error } = await _supabase.from('formcontsite').insert({
-                nome: formData.get('nome'),
-                email: formData.get('email'),
-                whatsapp: formData.get('whatsapp'),
-                mensagem: formData.get('mensagem') || '',
+                nome,
+                email,
+                whatsapp,
+                mensagem,
                 created_at: new Date().toISOString()
             });
 
             if (error) throw error;
+
+            // 2. Enviar e-mail via SMTP.js (Elastic Email)
+            const emailBody = `
+                <h2>Novo contato do site - Pistori & Associados</h2>
+                <p><strong>Nome:</strong> ${nome}</p>
+                <p><strong>E-mail:</strong> ${email}</p>
+                <p><strong>WhatsApp:</strong> ${whatsapp}</p>
+                <p><strong>Mensagem:</strong> ${mensagem || '(não informada)'}</p>
+                <hr>
+                <p style="color:#999;font-size:12px;">Enviado pelo formulário de contato do site.</p>
+            `;
+
+            await Email.send({
+                Host: 'smtp.elasticemail.com',
+                Username: 'vendaspistori@gmail.com',
+                Password: 'abeawtsjseuklqlh',
+                To: 'vendaspistori@gmail.com',
+                From: 'vendaspistori@gmail.com',
+                Subject: 'Novo Contato Site — ' + nome,
+                Body: emailBody
+            });
 
             alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
             contactForm.reset();
