@@ -34,3 +34,6 @@ screenshot.png
 
 # Environment variables
 .env*
+
+# Config local (dev mode, etc)
+admin/js/config.js

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Imobiliário</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+</head>
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => {
+                    console.log("SW registrado:", reg);
+
+                    // Quando SW novo é detectado → modo seguro
+                    reg.onupdatefound = () => {
+                        const newSW = reg.installing;
+                        newSW.onstatechange = () => {
+                            if (newSW.state === 'installed') {
+                                // Se existir SW anterior → nova versão está esperando
+                                if (navigator.serviceWorker.controller) {
+                                    console.log("Nova versão disponível. Será ativada ao fechar as abas.");
+                                }
+                            }
+                        };
+                    };
+                });
+        });
+    }
+    </script>
+
+<body>
+
+<!-- LAYOUT DESKTOP -->
+<div id="layoutDesktop">
+    <header id="topBar">
+        <div class="brand">Pistori</div>
+        <input type="text" id="searchInput" placeholder="Pesquisar..." />
+    </header>
+
+    <!-- MAPA -->
+    <div id="mapArea">
+        <button id="toggleMap" class="map-toggle-btn">⤢</button>
+        <div id="map"></div>
+    </div>
+
+    <!-- LISTA DESKTOP -->
+    <div id="listArea">
+        <section id="productListDesktop" class="product-list"></section>
+    </div>
+
+</div>
+
+<!-- BOTTOM SHEET (somente mobile) -->
+<div id="bottomSheet" class="sheet sheet-mid">
+    <div class="sheet-handle"></div>
+    <div class="sheet-content">
+        <section id="productList" class="product-list"></section>
+    </div>
+</div>
+
+<!-- CARD FLUTUANTE -->
+<div id="propertyCard" class="property-card hidden">
+    <button class="card-close">✕</button>
+    <img id="cardImage">
+    <h2 id="cardTitle"></h2>
+    <p id="cardDesc"></p>
+    <p id="cardPrice"></p>
+    <a id="cardLink" class="btn">Mais Informações</a>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>

@@ -113,7 +113,6 @@ header .container {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 2px solid var(--gold);
   object-fit: cover;
   transition: transform var(--transition);
 }
@@ -191,6 +190,16 @@ nav.main-nav {
 
 .btn-outline:hover {
   background: rgba(18, 77, 91, 0.1);
+}
+
+/* Hero-specific WhatsApp button */
+.hero-actions .btn-outline {
+  border-color: #fff;
+  color: #fff;
+}
+
+.hero-actions .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Mobile Menu Toggle */

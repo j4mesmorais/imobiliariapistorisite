@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Mapa Imobiliário</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script>
+        // Forçar a remoção de Service Workers que podem estar travando o cache
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+
+    <!-- LAYOUT DESKTOP -->
+    <div id="layoutDesktop">
+        <header id="topBar">
+            <div class="brand">Pistori</div>
+            <input type="text" id="searchInput" placeholder="Pesquisar..." />
+        </header>
+
+        <!-- MAPA -->
+        <div id="mapArea">
+            <button id="toggleMap" class="map-toggle-btn">⤢</button>
+            <div id="map"></div>
+        </div>
+
+        <!-- LISTA DESKTOP -->
+        <div id="listArea">
+            <section id="productListDesktop" class="product-list"></section>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM SHEET (somente mobile) -->
+    <div id="bottomSheet" class="sheet sheet-mid">
+        <div class="sheet-handle"></div>
+        <div class="sheet-content">
+            <section id="productList" class="product-list"></section>
+        </div>
+    </div>
+
+    <!-- CARD FLUTUANTE -->
+    <div id="propertyCard" class="property-card hidden">
+        <button class="card-close">✕</button>
+        <img id="cardImage">
+        <h2 id="cardTitle"></h2>
+        <p id="cardDesc"></p>
+        <p id="cardPrice"></p>
+        <a id="cardLink" class="btn">Mais Informações</a>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="data.js"></script>
+    <script type="module">
+        try {
+            // Tentar buscar dados do Supabase
+            const { default: ImoveisService } = await import('../dados/imoveis.js?v=' + Date.now());
+            const rawData = await ImoveisService.getFilter({ ativo: true });
+
+            if (rawData && rawData.length > 0) {
+                window.properties = rawData.map(p => ({
+                    id: p.id,
+                    title: p.titulo,
+                    desc: p.subtitulo,
+                    price: p.preco,
+                    lat: p.latitude,
+                    lng: p.longitude,
+                    image: p.imagem_url,
+                    link: p.links?.find(l => l.texto === 'Site')?.url || '#',
+                    whatsapp: p.links?.find(l => l.texto === 'WhatsApp')?.url?.replace('https://wa.me/', '') || ''
+                }));
+            }
+        } catch (e) {
+            console.warn('Supabase indisponível, usando dados locais de data.js');
+        }
+
+        console.log('properties:', window.properties);
+
+        // 3. Carregar o script principal com cache bust
+        const script = document.createElement('script');
+        script.src = 'app.js?v=' + Date.now();
+        document.body.appendChild(script);
+    </script>
+
+</body>
+
+</html>

@@ -300,7 +300,7 @@ function showLogin() {
 function showDashboard() {
     loginScreen.style.display = 'none';
     dashboard.style.display = 'block';
-    userName.textContent = keycloak.tokenParsed?.name || keycloak.tokenParsed?.preferred_username || 'Admin';
+    userName.textContent = (keycloak?.tokenParsed?.name || keycloak?.tokenParsed?.preferred_username || 'Admin');
     loadContatos();
     loadImoveis();
 }
@@ -338,6 +338,10 @@ function formatDate(iso) {
 
 /* ---------- Start ---------- */
 document.addEventListener('DOMContentLoaded', () => {
+    if (typeof ADMIN_CONFIG !== 'undefined' && ADMIN_CONFIG.devMode) {
+        showDashboard();
+        return;
+    }
     // Load keycloak JS from CDN then init
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/keycloak-js/dist/keycloak.min.js';
