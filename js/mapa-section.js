@@ -22,6 +22,7 @@
     const cardClose = card?.querySelector('.card-close');
     const listContainer = document.getElementById('productListMap');
     const searchInput = document.getElementById('searchInputMap');
+    const searchClear = document.getElementById('searchClearBtn');
 
     /* ---------- Init Map ---------- */
     const map = L.map('mapHome', {
@@ -47,7 +48,7 @@
         cardTitle.textContent = p.title;
         cardDesc.textContent = p.desc;
         cardPrice.textContent = p.price;
-        cardLink.href = p.link;
+        cardLink.href = 'https://wa.me/556239141992?text=Tenho%20interesse%20no%20imóvel:%20' + encodeURIComponent(p.title);
 
         card.classList.remove('hidden');
         requestAnimationFrame(() => card.classList.add('visible'));
@@ -75,6 +76,7 @@
         item.addEventListener('click', () => {
             map.setView([p.lat, p.lng], 15);
             openCard(p);
+            filterByTerm(p.title);
         });
         return item;
     }
@@ -103,7 +105,10 @@
             });
 
             const marker = L.marker([p.lat, p.lng], { icon: customIcon });
-            marker.on('click', () => openCard(p));
+            marker.on('click', () => {
+                openCard(p);
+                filterByTerm(p.title);
+            });
             markersGroup.addLayer(marker);
 
             // List item
@@ -122,9 +127,34 @@
         }
     }
 
+    /* ---------- Create "show all" item ---------- */
+    function createShowAllItem() {
+        const item = document.createElement('div');
+        item.className = 'product-item show-all-item';
+        item.innerHTML = `
+            <div class="product-body" style="text-align:center; padding:24px 20px;">
+                <div class="product-title" style="color:var(--gold); font-size:1.1rem;"><i class="ri-search-line" style="margin-right:8px;"></i>Mostrar Todos</div>
+            </div>
+        `;
+        item.addEventListener('click', () => {
+            searchInput.value = '';
+            filterByTerm('');
+        });
+        return item;
+    }
+
     /* ---------- Search filtering ---------- */
+    let showAllItem = null;
+
     function filterByTerm(term) {
         const lower = term.toLowerCase();
+        const hasFilter = lower.length > 0;
+
+        // Remove/show show-all item
+        if (showAllItem && showAllItem.parentNode) {
+            showAllItem.remove();
+            showAllItem = null;
+        }
 
         // Filter list items
         [...listContainer.children].forEach(item => {
@@ -132,31 +162,55 @@
             item.style.display = title.includes(lower) ? 'block' : 'none';
         });
 
+        // Insert "Mostrar Todos" if filtered
+        if (hasFilter) {
+            showAllItem = createShowAllItem();
+            listContainer.insertBefore(showAllItem, listContainer.firstChild);
+        }
+
         // Rebuild markers
         markersGroup.clearLayers();
 
-        allProperties
-            .filter(p => p.title.toLowerCase().includes(lower))
-            .forEach(p => {
-                const customIcon = L.divIcon({
-                    className: 'custom-marker',
-                    html: `
-                        <div class="marker-content">
-                            <img src="${p.image}" alt="${p.title}" loading="lazy">
-                            <div class="marker-title">${p.title}</div>
-                        </div>
-                    `,
-                    iconSize: [140, 60],
-                    iconAnchor: [70, 60]
-                });
-                const marker = L.marker([p.lat, p.lng], { icon: customIcon });
-                marker.on('click', () => openCard(p));
-                markersGroup.addLayer(marker);
+        (hasFilter
+            ? allProperties.filter(p => p.title.toLowerCase().includes(lower))
+            : allProperties
+        ).forEach(p => {
+            const customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `
+                    <div class="marker-content">
+                        <img src="${p.image}" alt="${p.title}" loading="lazy">
+                        <div class="marker-title">${p.title}</div>
+                    </div>
+                `,
+                iconSize: [140, 60],
+                iconAnchor: [70, 60]
             });
+            const marker = L.marker([p.lat, p.lng], { icon: customIcon });
+            marker.on('click', () => {
+                openCard(p);
+                filterByTerm(p.title);
+            });
+            markersGroup.addLayer(marker);
+        });
     }
 
     if (searchInput) {
-        searchInput.addEventListener('input', () => filterByTerm(searchInput.value));
+        searchInput.addEventListener('input', () => {
+            filterByTerm(searchInput.value);
+            if (searchClear) {
+                searchClear.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
+            }
+        });
+    }
+
+    if (searchClear) {
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.style.display = 'none';
+            filterByTerm('');
+            searchInput.focus();
+        });
     }
 
     /* ---------- Fetch & Render ---------- */

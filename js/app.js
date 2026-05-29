@@ -133,23 +133,38 @@ document.querySelectorAll('.mobile-nav .nav-link').forEach(link => {
     });
 });
 
-// Form Submission
+// Form Submission — Supabase
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = contactForm.querySelector('button');
         const originalText = btn.innerHTML;
-        
+
         btn.innerHTML = 'Enviando...';
         btn.disabled = true;
 
-        // Simulando envio
-        setTimeout(() => {
+        const formData = new FormData(contactForm);
+
+        try {
+            const { error } = await _supabase.from('formcontsite').insert({
+                nome: formData.get('nome'),
+                email: formData.get('email'),
+                whatsapp: formData.get('whatsapp'),
+                mensagem: formData.get('mensagem') || '',
+                created_at: new Date().toISOString()
+            });
+
+            if (error) throw error;
+
             alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
             contactForm.reset();
+        } catch (err) {
+            console.error('Erro ao enviar formulário:', err);
+            alert('Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.');
+        } finally {
             btn.innerHTML = originalText;
             btn.disabled = false;
-        }, 1500);
+        }
     });
 }
 

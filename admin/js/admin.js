@@ -11,7 +11,7 @@ const KC_CONFIG = {
 };
 
 const SUPABASE_URL = 'https://supabase.imobiliariapistori.com.br';
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UifQ.E64OFGjihkIjMrTmbqeErLD3upsX92ObgfTq5RSw1RU';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
 
 // DOM refs
 const loginScreen = document.getElementById('login-screen');
@@ -41,8 +41,8 @@ let deletingId = null;
 async function supabaseRequest(method, path, body) {
     const url = SUPABASE_URL + path;
     const headers = {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_SERVICE_KEY,
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
         'Content-Type': 'application/json'
     };
     if (method === 'GET') {

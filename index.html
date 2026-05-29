@@ -37,7 +37,7 @@
 
             <nav class="main-nav">
                 <a href="#inicio" class="nav-link">Início</a>
-                <a href="#imoveis" class="nav-link">Imóveis</a>
+                <a href="#mapa-section" class="nav-link">Imóveis</a>
                 <a href="#sobre" class="nav-link">Sobre Nós</a>
                 <a href="#mapa-section" class="nav-link">Mapa</a>
                 <a href="#contato" class="nav-link">Contato</a>
@@ -55,7 +55,7 @@
     <!-- Mobile Navigation -->
     <div class="mobile-nav">
         <a href="#inicio" class="nav-link">Início</a>
-        <a href="#imoveis" class="nav-link">Imóveis</a>
+        <a href="#mapa-section" class="nav-link">Imóveis</a>
         <a href="#sobre" class="nav-link">Sobre Nós</a>
         <a href="#mapa-section" class="nav-link">Mapa</a>
         <a href="#contato" class="nav-link">Contato</a>
@@ -69,28 +69,46 @@
         </div>
         <div class="container reveal">
             <span class="hero-subtitle">Qualidade de Vida e Bem-Estar</span>
-            <h1>Imóveis que conectam você ao seu <span class="text-gradient-gold">próximo capítulo.</span></h1>
+            <h1>Somos especializados na região Noroeste de <span class="text-gradient-gold">Goiânia.</span></h1>
             <p>Especialistas em conectar seus desejos de vida às melhores oportunidades do mercado imobiliário em harmonia com a natureza.</p>
             <div class="hero-actions">
-                <a href="#imoveis" class="btn btn-primary">Ver Imóveis <i class="ri-arrow-right-line" style="margin-left: 8px;"></i></a>
+                <a href="#mapa-section" class="btn btn-primary">Ver Imóveis <i class="ri-arrow-right-line" style="margin-left: 8px;"></i></a>
                 <a href="https://wa.me/556239141992" target="_blank" class="btn btn-outline">Falar no WhatsApp</a>
             </div>
         </div>
     </section>
 
-    <!-- Properties Section -->
-    <section id="imoveis">
+    <!-- Search Section -->
+    <section id="search-section">
         <div class="container">
-            <div class="section-header reveal">
-                <h2>Empreendimentos em <span style="color: var(--gold);">Destaque</span></h2>
-                <p>Descubra oportunidades únicas e exclusivas para o seu bem-estar e investimento inteligente na região metropolitana de Goiânia.</p>
-            </div>
-            
-            <div class="properties-grid" id="properties-container">
-                <!-- Cards will be injected by JavaScript from Supabase -->
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--muted-foreground);">
-                    Carregando oportunidades exclusivas...
+            <div class="search-wrapper">
+                <h2>Encontre o imóvel <span>perfeito</span></h2>
+                <div class="search-field">
+                    <i class="ri-search-line"></i>
+                    <input type="text" id="searchInputMap" placeholder="Pesquisar imóvel..." />
+                    <button id="searchClearBtn" class="search-clear" style="display:none;">✕</button>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section id="mapa-section">
+        <!-- Floating Card -->
+        <div id="propertyCardMap" class="property-card hidden">
+            <button class="card-close">✕</button>
+            <img id="cardImageMap">
+            <h2 id="cardTitleMap"></h2>
+            <p id="cardDescMap"></p>
+            <p id="cardPriceMap"></p>
+            <a id="cardLinkMap" class="btn">Mais Informações</a>
+        </div>
+
+        <!-- Map + List Layout -->
+        <div class="mapa-layout">
+            <div id="mapHome"></div>
+            <div class="mapa-list" id="mapList">
+                <section id="productListMap" class="product-list"></section>
             </div>
         </div>
     </section>
@@ -120,36 +138,6 @@
         </div>
     </section>
 
-    <!-- Map Section -->
-    <section id="mapa-section">
-        <div class="mapa-label">
-            <h2>Imóveis no <span>Mapa</span></h2>
-        </div>
-
-        <!-- Floating Card -->
-        <div id="propertyCardMap" class="property-card hidden">
-            <button class="card-close">✕</button>
-            <img id="cardImageMap">
-            <h2 id="cardTitleMap"></h2>
-            <p id="cardDescMap"></p>
-            <p id="cardPriceMap"></p>
-            <a id="cardLinkMap" class="btn">Mais Informações</a>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="mapa-search">
-            <input type="text" id="searchInputMap" placeholder="Pesquisar imóvel..." />
-        </div>
-
-        <!-- Map + List Layout -->
-        <div class="mapa-layout">
-            <div id="mapHome"></div>
-            <div class="mapa-list" id="mapList">
-                <section id="productListMap" class="product-list"></section>
-            </div>
-        </div>
-    </section>
-
     <!-- Contact Section -->
     <section id="contato">
         <div class="container">
@@ -172,19 +160,19 @@
                     <form id="contact-form">
                         <div class="form-group">
                             <label>Nome Completo</label>
-                            <input type="text" class="form-control" placeholder="Seu nome" required>
+                            <input type="text" name="nome" class="form-control" placeholder="Seu nome" required>
                         </div>
                         <div class="form-group">
                             <label>E-mail</label>
-                            <input type="email" class="form-control" placeholder="seu@email.com" required>
+                            <input type="email" name="email" class="form-control" placeholder="seu@email.com" required>
                         </div>
                         <div class="form-group">
                             <label>WhatsApp</label>
-                            <input type="tel" class="form-control" placeholder="(00) 00000-0000" required>
+                            <input type="tel" name="whatsapp" class="form-control" placeholder="(00) 00000-0000" required>
                         </div>
                         <div class="form-group">
                             <label>Mensagem (Opcional)</label>
-                            <textarea class="form-control" placeholder="Como podemos te ajudar?"></textarea>
+                            <textarea name="mensagem" class="form-control" placeholder="Como podemos te ajudar?"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Mensagem</button>
                     </form>
