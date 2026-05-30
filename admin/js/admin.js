@@ -528,6 +528,10 @@ if (imgSelectorClose) {
 if (imgSelectorCancel) {
     imgSelectorCancel.addEventListener('click', closeImageSelector);
 }
+const imgSelectorOk = document.getElementById('image-selector-ok');
+if (imgSelectorOk) {
+    imgSelectorOk.addEventListener('click', confirmImageSelection);
+}
 if (imgSelectorOverlay) {
     imgSelectorOverlay.addEventListener('click', (e) => {
         if (e.target === imgSelectorOverlay) confirmImageSelection();

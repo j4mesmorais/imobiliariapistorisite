@@ -744,6 +744,25 @@ tr:hover td {
     flex: 1;
     overflow-y: auto;
     padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+}
+
+.slide-panel-body #imovel-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.slide-panel-body #imovel-form .form-grid {
+    flex: 1;
+}
+
+.slide-panel-body .form-footer {
+    margin-top: 24px;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
 }
 
 .slide-panel-footer {

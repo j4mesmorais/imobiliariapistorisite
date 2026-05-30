@@ -26,16 +26,22 @@ A pasta `site/` LOCAL contém **mais arquivos** que o GitHub (imagens, diretóri
 
 ## Apache Reverse Proxy (httpd-proxy.conf)
 
-O arquivo `site/httpd-proxy.conf` contém a config de reverse proxy do Apache para serviços internos no Docker Swarm (atualmente media-api).
+O arquivo `httpd-proxy.conf` contém a config de reverse proxy do Apache (mod_proxy) para serviços internos no Docker Swarm.
 
-**Após cada deploy**, é necessário copiá-lo para o container e fazer graceful reload:
+**O proxy config agora é bakeado na imagem Docker** (`site-docker/Dockerfile` copia o arquivo + `httpd.conf` já inclui o `Include`). Isso significa que:
+- A imagem já nasce com o proxy configurado
+- Qualquer container que subir a partir dela já tem o proxy funcionando
+- **Não precisa mais de comandos manuais pós-deploy**
 
-```bash
-# SSH na VPS e executar:
-docker cp httpd-proxy.conf site_site.1.<container-id>:/usr/local/apache2/conf/httpd-proxy.conf
-docker exec site_site.1.<container-id> sh -c "grep -q 'httpd-proxy.conf' /usr/local/apache2/conf/httpd.conf || echo 'Include conf/httpd-proxy.conf' >> /usr/local/apache2/conf/httpd.conf"
-docker exec site_site.1.<container-id> httpd -k graceful
-```
+### Fluxo para modificar o proxy
+
+1. Edite `site/httpd-proxy.conf` (source of truth)
+2. Copie para `site-docker/httpd-proxy.conf`
+3. Faça rebuild da imagem Docker:
+   ```bash
+   docker build -t site-httpd-php:latest site-docker/
+   ```
+4. Faça deploy: `docker stack deploy -c stacks/site.yml site`
 
 Ver documentação detalhada em `MEDIA-PROXY.md`.
 
