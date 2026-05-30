@@ -130,6 +130,12 @@
     gap: 16px;
 }
 
+#productListMap {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
 #mapa-section .product-item {
     background: var(--card, #141b22);
     border: 1px solid var(--border, #324452);
