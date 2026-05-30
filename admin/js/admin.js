@@ -407,17 +407,25 @@ const editImagemUrl = document.getElementById('edit-imagem_url');
 
 let selectedImageUrl = '';
 
-/** Fetch image list from NextCloud via PHP proxy */
+/** Fetch image list from media-api */
 async function listNextCloudImages() {
-    const response = await fetch('proxy-list.php');
+    const baseUrl = ADMIN_CONFIG.mediaApi.baseUrl;
+    const path = ADMIN_CONFIG.mediaApi.imagesPath;
+    const url = `${baseUrl}/list?path=${encodeURIComponent(path)}&type=image`;
+
+    const response = await fetch(url);
 
     if (!response.ok) {
         const err = await response.json().catch(() => ({}));
         throw new Error(err.error || 'HTTP ' + response.status);
     }
 
-    const images = await response.json();
-    return images;
+    const data = await response.json();
+    // media-api returns { files: [{ name, ... }] }, map to { filename, url }
+    return (data.files || []).map(f => ({
+        filename: f.name,
+        url: `${baseUrl}/raw/${path}/${encodeURIComponent(f.name)}`
+    }));
 }
 
 /** Render image grid in the selector modal */
@@ -443,7 +451,7 @@ function renderImageGrid(images) {
         if (selectedImageUrl === img.url) item.classList.add('selected');
 
         item.innerHTML = `
-            <img src="proxy-image.php?file=${encodeURIComponent(img.filename)}" alt="${img.filename}" loading="lazy">
+            <img src="${img.url}" alt="${img.filename}" loading="lazy">
             <div class="img-check"><i class="ri-check-line"></i></div>
             <div class="img-name">${escHtml(img.filename)}</div>
         `;
@@ -453,8 +461,8 @@ function renderImageGrid(images) {
             imgSelectorGrid.querySelectorAll('.img-selector-item').forEach(el => el.classList.remove('selected'));
             // Select this one
             item.classList.add('selected');
-            // Save as proxy URL instead of direct WebDAV URL
-            selectedImageUrl = 'proxy-image.php?file=' + encodeURIComponent(img.filename);
+            // Save as media-api URL
+            selectedImageUrl = img.url;
         });
 
         imgSelectorGrid.appendChild(item);

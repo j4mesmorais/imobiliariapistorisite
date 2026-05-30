@@ -709,7 +709,7 @@ tr:hover td {
     position: fixed;
     top: 64px;
     right: 0;
-    width: 560px;
+    width: 620px;
     height: calc(100vh - 64px);
     background: var(--card);
     border-left: 1px solid var(--border);
@@ -743,7 +743,7 @@ tr:hover td {
 .slide-panel-body {
     flex: 1;
     overflow-y: auto;
-    padding: 24px;
+    padding: 24px 28px;
 }
 
 .slide-panel-footer {
