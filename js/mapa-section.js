@@ -249,7 +249,7 @@
                     lat: p.latitude,
                     lng: p.longitude,
                     image: p.imagem_url
-                        ? (p.imagem_url.startsWith('http') && !p.imagem_url.startsWith('proxy-image.php') ? p.imagem_url : '/admin/' + p.imagem_url)
+                        ? (p.imagem_url.startsWith('http') || p.imagem_url.startsWith('/') ? p.imagem_url : '/admin/' + p.imagem_url)
                         : 'https://img.usecurling.com/p/400/300?q=real%20estate',
                     link: p.links?.find(l => l.texto === 'Site')?.url || '#'
                 })).filter(p => p.lat && p.lng);
