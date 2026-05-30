@@ -24,6 +24,21 @@
 A pasta `site/` LOCAL contém **mais arquivos** que o GitHub (imagens, diretório `mapa/` com backups, etc.).
 **NÃO** clone o repositório do zero para fazer deploy — você perderia arquivos. Sempre trabalhe na pasta `site/` local e faz commit+push.
 
+## Apache Reverse Proxy (httpd-proxy.conf)
+
+O arquivo `site/httpd-proxy.conf` contém a config de reverse proxy do Apache para serviços internos no Docker Swarm (atualmente media-api).
+
+**Após cada deploy**, é necessário copiá-lo para o container e fazer graceful reload:
+
+```bash
+# SSH na VPS e executar:
+docker cp httpd-proxy.conf site_site.1.<container-id>:/usr/local/apache2/conf/httpd-proxy.conf
+docker exec site_site.1.<container-id> sh -c "grep -q 'httpd-proxy.conf' /usr/local/apache2/conf/httpd.conf || echo 'Include conf/httpd-proxy.conf' >> /usr/local/apache2/conf/httpd.conf"
+docker exec site_site.1.<container-id> httpd -k graceful
+```
+
+Ver documentação detalhada em `MEDIA-PROXY.md`.
+
 ## Acesso SSH (VPS)
 
 ```bash
