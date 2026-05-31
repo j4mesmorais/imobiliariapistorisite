@@ -80,11 +80,12 @@
                                 <th>WhatsApp</th>
                                 <th>Mensagem</th>
                                 <th>Data</th>
+                                <th style="width:60px;">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="contatos-body">
                             <tr>
-                                <td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">
+                                <td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">
                                     Carregando...
                                 </td>
                             </tr>
@@ -228,7 +229,7 @@
     <div id="delete-confirm-overlay" class="modal-overlay">
         <div class="delete-confirm-box">
             <h3>Excluir Imóvel</h3>
-            <p>Tem certeza que deseja excluir este imóvel? Esta ação não pode ser desfeita.</p>
+            <p id="delete-confirm-text">Tem certeza que deseja excluir este imóvel? Esta ação não pode ser desfeita.</p>
             <div class="modal-footer">
                 <button id="delete-confirm-no" class="btn btn-outline">Cancelar</button>
                 <button id="delete-confirm-yes" class="btn btn-danger">Sim, Excluir</button>

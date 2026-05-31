@@ -107,13 +107,15 @@ function updateResultCount(id, count) {
     if (el) el.textContent = count + ' registro' + (count !== 1 ? 's' : '');
 }
 
-/* ---------- Contatos (read-only) ---------- */
+/* ---------- Contatos ---------- */
+let deletingContatoId = null;
+
 async function loadContatos() {
-    contatosBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">Carregando...</td></tr>';
+    contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Carregando...</td></tr>';
     try {
         const data = await supabaseRequest('GET', '/rest/v1/formcontsite?order=created_at.desc&limit=500');
         if (!data || data.length === 0) {
-            contatosBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted-foreground);">Nenhum contato encontrado.</td></tr>';
+            contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Nenhum contato encontrado.</td></tr>';
             updateResultCount('contatos-count', 0);
             return;
         }
@@ -124,11 +126,35 @@ async function loadContatos() {
                 <td>${c.whatsapp ? `<a href="https://wa.me/${c.whatsapp.replace(/\D/g, '')}" target="_blank" style="color:var(--gold);">${escHtml(c.whatsapp)}</a>` : '-'}</td>
                 <td>${escHtml(c.mensagem ? c.mensagem.substring(0, 80) + (c.mensagem.length > 80 ? '...' : '') : '-')}</td>
                 <td style="white-space:nowrap;font-size:0.8rem;">${formatDate(c.created_at)}</td>
+                <td>
+                    <button class="btn-table btn-delete" data-id="${c.id}" title="Excluir"><i class="ri-delete-bin-line"></i></button>
+                </td>
             </tr>
         `).join('');
         updateResultCount('contatos-count', data.length);
+
+        // Attach delete events
+        contatosBody.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', () => openDeleteContatoConfirm(parseInt(btn.dataset.id)));
+        });
     } catch (err) {
-        contatosBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:#ef4444;">Erro ao carregar: ' + escHtml(err.message) + '</td></tr>';
+        contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#ef4444;">Erro ao carregar: ' + escHtml(err.message) + '</td></tr>';
+    }
+}
+
+function openDeleteContatoConfirm(id) {
+    deletingContatoId = id;
+    document.getElementById('delete-confirm-text').textContent = 'Tem certeza que deseja excluir este contato? Esta ação não pode ser desfeita.';
+    deleteConfirmOverlay.classList.add('active');
+}
+
+async function deleteContato(id) {
+    try {
+        await supabaseRequest('DELETE', '/rest/v1/formcontsite?id=eq.' + id);
+        showToast('Contato excluído com sucesso.', 'success');
+        loadContatos();
+    } catch (err) {
+        showToast('Erro ao excluir: ' + err.message, 'error');
     }
 }
 
@@ -281,32 +307,38 @@ function openDeleteConfirm(id) {
 }
 
 deleteConfirmYes.addEventListener('click', async () => {
-    if (!deletingId) return;
     deleteConfirmYes.disabled = true;
     deleteConfirmYes.textContent = 'Excluindo...';
     try {
-        await supabaseRequest('DELETE', '/rest/v1/imoveis?id=eq.' + deletingId);
-        showToast('Imóvel excluído com sucesso.', 'success');
+        if (deletingContatoId) {
+            await deleteContato(deletingContatoId);
+            deletingContatoId = null;
+        } else if (deletingId) {
+            await supabaseRequest('DELETE', '/rest/v1/imoveis?id=eq.' + deletingId);
+            showToast('Imóvel excluído com sucesso.', 'success');
+            deletingId = null;
+            loadImoveis();
+        }
         deleteConfirmOverlay.classList.remove('active');
-        loadImoveis();
     } catch (err) {
         showToast('Erro ao excluir: ' + err.message, 'error');
     } finally {
         deleteConfirmYes.disabled = false;
         deleteConfirmYes.textContent = 'Sim, Excluir';
-        deletingId = null;
     }
 });
 
 deleteConfirmNo.addEventListener('click', () => {
     deleteConfirmOverlay.classList.remove('active');
     deletingId = null;
+    deletingContatoId = null;
 });
 
 deleteConfirmOverlay.addEventListener('click', (e) => {
     if (e.target === deleteConfirmOverlay) {
         deleteConfirmOverlay.classList.remove('active');
         deletingId = null;
+        deletingContatoId = null;
     }
 });
 
