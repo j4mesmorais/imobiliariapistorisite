@@ -147,8 +147,12 @@
     let showAllItem = null;
 
     function filterByTerm(term) {
-        const lower = term.toLowerCase();
-        const hasFilter = lower.length > 0;
+        filterByTerms([term]);
+    }
+
+    function filterByTerms(terms) {
+        const lower = terms.filter(t => t).map(t => t.toLowerCase().trim());
+        const hasFilter = lower.length > 0 && lower.some(t => t.length > 0);
 
         // Remove/show show-all item
         if (showAllItem && showAllItem.parentNode) {
@@ -156,10 +160,10 @@
             showAllItem = null;
         }
 
-        // Filter list items
+        // Filter list items — show item if ANY term matches
         [...listContainer.children].forEach(item => {
             const title = item.dataset.title || '';
-            item.style.display = title.includes(lower) ? 'block' : 'none';
+            item.style.display = (!hasFilter || lower.some(t => title.includes(t))) ? 'block' : 'none';
         });
 
         // Insert "Mostrar Todos" if filtered
@@ -172,7 +176,7 @@
         markersGroup.clearLayers();
 
         (hasFilter
-            ? allProperties.filter(p => p.title.toLowerCase().includes(lower))
+            ? allProperties.filter(p => lower.some(t => p.title.toLowerCase().includes(t)))
             : allProperties
         ).forEach(p => {
             const customIcon = L.divIcon({
@@ -288,6 +292,26 @@
 
     window.addEventListener('resize', () => {
         setTimeout(() => map.invalidateSize(), 200);
+    });
+
+    /* ---------- Saídas buttons (scroll + filter) ---------- */
+    document.querySelectorAll('.saida-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const terms = JSON.parse(btn.dataset.terms);
+            filterByTerms(terms);
+
+            // Scroll to map section
+            const mapSection = document.getElementById('mapa-section');
+            if (mapSection) {
+                mapSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Clear search input
+            if (searchInput) {
+                searchInput.value = '';
+                if (searchClear) searchClear.style.display = 'none';
+            }
+        });
     });
 
     /* ---------- Start ---------- */

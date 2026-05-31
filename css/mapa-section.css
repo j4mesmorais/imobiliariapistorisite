@@ -331,7 +331,185 @@
     filter: brightness(1.1);
 }
 
-/* Responsive */
+/* =========================================
+   SAÍDAS DE GOIÂNIA — Dark theme cards
+   ========================================= */
+#search-section .saidas-cards {
+    margin-bottom: 48px;
+}
+
+#search-section .saidas-heading {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+#search-section .saidas-eyebrow {
+    display: block;
+    letter-spacing: 4px;
+    font-weight: 700;
+    color: var(--gold, #D4AF37);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+#search-section .saidas-line {
+    width: 48px;
+    height: 3px;
+    background: var(--gold, #D4AF37);
+    margin: 0 auto 20px;
+}
+
+#search-section .saidas-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: white;
+    margin-bottom: 12px;
+}
+
+#search-section .saidas-sub {
+    font-size: 1rem;
+    color: var(--muted-foreground, #8899aa);
+}
+
+#search-section .saidas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+#search-section .saida-card {
+    background: var(--card, #141b22);
+    border: 1px solid var(--border, #324452);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+#search-section .saida-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    border-color: var(--gold, #D4AF37);
+}
+
+#search-section .saida-image {
+    position: relative;
+    height: 280px;
+    padding: 100px 30px 30px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#search-section .saida-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,.25));
+}
+
+#search-section .saida-image > * {
+    position: relative;
+    z-index: 1;
+}
+
+#search-section .saida-image.go060 {
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') center/cover;
+}
+#search-section .saida-image.go070 {
+    background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80') center/cover;
+}
+#search-section .saida-image.go462 {
+    background: url('https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1200&q=80') center/cover;
+}
+
+#search-section .saida-badge {
+    display: inline-block;
+    align-self: flex-start;
+    background: var(--gold, #D4AF37);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+#search-section .saida-image h3 {
+    font-size: 2.8rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+#search-section .saida-image p {
+    font-size: 0.95rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-top: 4px;
+}
+
+#search-section .saida-body {
+    padding: 24px 28px 28px;
+}
+
+#search-section .saida-body ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#search-section .saida-body li {
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+    color: var(--muted-foreground, #b3bcc4);
+    display: flex;
+    align-items: center;
+}
+
+#search-section .saida-body li::before {
+    content: "✓";
+    color: var(--gold, #D4AF37);
+    font-weight: 700;
+    margin-right: 12px;
+    font-size: 1rem;
+}
+
+#search-section .saida-btn {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    color: #000;
+    background: var(--gold-gradient, linear-gradient(135deg, #D4AF37 0%, #F1D592 50%, #D4AF37 100%));
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 400ms ease;
+}
+
+#search-section .saida-btn:hover {
+    box-shadow: var(--gold-glow, 0 0 15px rgba(212, 175, 55, 0.4));
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+#search-section .saida-btn span {
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+}
+
+#search-section .saida-btn:hover span {
+    transform: translateX(4px);
+}
+
 @media (max-width: 900px) {
     #mapa-section .mapa-layout {
         grid-template-columns: 1fr;
@@ -347,9 +525,48 @@
         border-left: none;
         border-top: 1px solid var(--border, #324452);
     }
+
+    #search-section .saidas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #search-section .saidas-title {
+        font-size: 1.6rem;
+    }
+
+    #search-section .saida-image {
+        height: 220px;
+        padding: 80px 24px 24px;
+    }
+
+    #search-section .saida-image h3 {
+        font-size: 2.2rem;
+    }
 }
 
 @media (max-width: 768px) {
+
+    #search-section .saidas-title {
+        font-size: 1.3rem;
+    }
+
+    #search-section .saida-image h3 {
+        font-size: 2rem;
+    }
+
+    #search-section .saida-body {
+        padding: 20px;
+    }
+
+    #search-section .saida-body li {
+        font-size: 0.85rem;
+    }
+
+    #search-section .saida-image {
+        height: 180px;
+        padding: 60px 20px 20px;
+    }
+
     #mapa-section {
         min-height: 400px;
     }
