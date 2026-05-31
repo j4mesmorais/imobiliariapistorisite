@@ -117,7 +117,7 @@ let deletingContatoId = null;
 async function loadContatos() {
     contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Carregando...</td></tr>';
     try {
-        const data = await supabaseRequest('GET', '/rest/v1/formcontsite?order=created_at.desc&limit=500&select=id');
+        const data = await supabaseRequest('GET', '/rest/v1/formcontsite?order=created_at.desc&limit=500');
         if (!data || data.length === 0) {
             contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Nenhum contato encontrado.</td></tr>';
             updateResultCount('contatos-count', 0);
