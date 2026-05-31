@@ -1,12 +1,6 @@
 const SUPABASE_URL = 'https://www.imobiliariapistori.com.br/supabase';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
 
-const supabaseUrl = SUPABASE_URL;
-const supabaseKey = SUPABASE_ANON_KEY;
-
-// @ts-ignore
-const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
 // DOM Elements
 const header = document.querySelector('header');
 const menuToggle = document.querySelector('.menu-toggle');
@@ -16,16 +10,22 @@ const contactForm = document.getElementById('contact-form');
 
 // --- Functions ---
 
-// 1. Initial Data Fetch from Supabase
+// 1. Initial Data Fetch from Supabase (via Apache reverse proxy)
 async function fetchProperties() {
     try {
         console.log('Buscando imóveis no Supabase...');
-        const { data, error } = await _supabase
-            .from('imoveis')
-            .select('*')
-            .eq('ativo', true);
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/imoveis?select=*&ativo=eq.true`,
+            {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY
+                }
+            }
+        );
 
-        if (error) throw error;
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
 
         if (data && data.length > 0) {
             renderProperties(data);
@@ -149,16 +149,23 @@ if (contactForm) {
         const mensagem = formData.get('mensagem') || '';
 
         try {
-            // 1. Salvar no Supabase
-            const { error } = await _supabase.from('formcontsite').insert({
-                nome,
-                email,
-                whatsapp,
-                mensagem,
-                created_at: new Date().toISOString()
+            // 1. Salvar no Supabase (via Apache reverse proxy)
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/formcontsite`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify({
+                    nome,
+                    email,
+                    whatsapp,
+                    mensagem,
+                    created_at: new Date().toISOString()
+                })
             });
 
-            if (error) throw error;
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
             // 2. Enviar e-mail via API (backend)
             try {
@@ -180,7 +187,7 @@ if (contactForm) {
             contactForm.reset();
         } catch (err) {
             console.error('Erro ao enviar formulário:', err);
-            alert(err?.message || err?.error_description || 'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.');
+            alert(err?.message || 'Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.');
         } finally {
             btn.innerHTML = originalText;
             btn.disabled = false;
