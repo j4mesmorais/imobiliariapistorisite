@@ -10,7 +10,7 @@ const KC_CONFIG = {
     clientId: 'site-admin'
 };
 
-const SUPABASE_URL = 'https://supabase.imobiliariapistori.com.br';
+const SUPABASE_URL = 'https://www.imobiliariapistori.com.br/supabase';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
 
 // DOM refs
