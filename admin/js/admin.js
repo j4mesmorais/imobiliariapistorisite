@@ -46,7 +46,8 @@ async function supabaseRequest(method, path, body) {
     };
     if (method === 'GET') {
         headers['Prefer'] = 'count=exact';
-        headers['Cache-Control'] = 'no-cache';
+        headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+        headers['Pragma'] = 'no-cache';
     }
     const res = await fetch(url, {
         method,
@@ -116,7 +117,7 @@ let deletingContatoId = null;
 async function loadContatos() {
     contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Carregando...</td></tr>';
     try {
-        const data = await supabaseRequest('GET', '/rest/v1/formcontsite?order=created_at.desc&limit=500');
+        const data = await supabaseRequest('GET', '/rest/v1/formcontsite?order=created_at.desc&limit=500&select=id');
         if (!data || data.length === 0) {
             contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Nenhum contato encontrado.</td></tr>';
             updateResultCount('contatos-count', 0);
@@ -153,9 +154,10 @@ function openDeleteContatoConfirm(id) {
 
 async function deleteContato(id) {
     try {
-        await supabaseRequest('DELETE', '/rest/v1/formcontsite?id=eq.' + id);
+        const res = await supabaseRequest('DELETE', '/rest/v1/formcontsite?id=eq.' + id);
         showToast('Contato excluído com sucesso.', 'success');
-        loadContatos();
+        // Force a fresh fetch — small delay to avoid any caching window
+        setTimeout(() => loadContatos(), 300);
     } catch (err) {
         showToast('Erro ao excluir: ' + err.message, 'error');
     }
