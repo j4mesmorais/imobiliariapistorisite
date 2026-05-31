@@ -37,3 +37,7 @@ screenshot.png
 
 # Config local (dev mode, etc)
 admin/js/config.js
+
+# Unrelated local files
+saidasgoiania/
+secao_goiania_html_css.zip
