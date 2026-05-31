@@ -162,7 +162,7 @@ if (contactForm) {
 
             // 2. Enviar e-mail via API (backend)
             try {
-                await fetch('https://api.imobiliariapistori.com.br/api/send-email', {
+                await fetch('/api/send-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
