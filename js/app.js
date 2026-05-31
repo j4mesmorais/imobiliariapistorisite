@@ -160,31 +160,18 @@ if (contactForm) {
 
             if (error) throw error;
 
-            // 2. Enviar e-mail via SMTP.js (Elastic Email) — fallback silencioso
+            // 2. Enviar e-mail via API (backend)
             try {
-                if (typeof Email !== 'undefined') {
-                    const emailBody = `
-                        <h2>Novo contato do site - Pistori & Associados</h2>
-                        <p><strong>Nome:</strong> ${nome}</p>
-                        <p><strong>E-mail:</strong> ${email}</p>
-                        <p><strong>WhatsApp:</strong> ${whatsapp}</p>
-                        <p><strong>Mensagem:</strong> ${mensagem || '(não informada)'}</p>
-                        <hr>
-                        <p style="color:#999;font-size:12px;">Enviado pelo formulário de contato do site.</p>
-                    `;
-
-                    await Email.send({
-                        Host: 'smtp.elasticemail.com',
-                        Username: 'vendas.pistori@gmail.com',
-                        Password: 'abeawtsjseuklqlh',
-                        To: 'vendas.pistori@gmail.com',
-                        From: 'vendas.pistori@gmail.com',
-                        Subject: 'Novo Contato Site — ' + nome,
-                        Body: emailBody
-                    });
-                } else {
-                    console.warn('SMTP.js Email not available — email notification skipped');
-                }
+                await fetch('https://api.imobiliariapistori.com.br/api/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nome,
+                        email,
+                        whatsapp,
+                        mensagem: mensagem || '(não informada)'
+                    })
+                });
             } catch (emailErr) {
                 console.warn('Falha ao enviar e-mail (não crítico):', emailErr);
             }
