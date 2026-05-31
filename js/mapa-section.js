@@ -6,7 +6,7 @@
 (function () {
     'use strict';
 
-    const SUPABASE_URL = 'https://supabase.imobiliariapistori.com.br';
+    const SUPABASE_URL = 'https://www.imobiliariapistori.com.br/supabase';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
 
     // DOM refs
@@ -220,31 +220,20 @@
     /* ---------- Fetch & Render ---------- */
     async function loadMapData() {
         try {
-            let data = null;
-            if (typeof _supabase !== 'undefined' && _supabase) {
-                const { data: sbData, error } = await _supabase
-                    .from('imoveis')
-                    .select('*')
-                    .eq('ativo', true);
-
-                if (!error && sbData && sbData.length > 0) {
-                    data = sbData;
+            const response = await fetch(
+                `${SUPABASE_URL}/rest/v1/imoveis?select=*&ativo=eq.true`,
+                {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY
+                    }
                 }
-            }
+            );
 
-            if (!data) {
-                const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                const { data: sbData, error } = await sb
-                    .from('imoveis')
-                    .select('*')
-                    .eq('ativo', true);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-                if (!error && sbData && sbData.length > 0) {
-                    data = sbData;
-                }
-            }
+            const data = await response.json();
 
-            if (data) {
+            if (data && data.length > 0) {
                 const properties = data.map(p => ({
                     id: p.id,
                     title: p.titulo,
@@ -261,6 +250,7 @@
                 renderAll(properties);
             } else {
                 console.warn('Mapa-section: Nenhum imóvel encontrado no Supabase');
+                renderAll(getFallbackProperties());
             }
         } catch (err) {
             console.warn('Mapa-section: Erro ao carregar dados, usando fallback local');
