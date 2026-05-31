@@ -46,6 +46,7 @@ async function supabaseRequest(method, path, body) {
     };
     if (method === 'GET') {
         headers['Prefer'] = 'count=exact';
+        headers['Cache-Control'] = 'no-cache';
     }
     const res = await fetch(url, {
         method,
@@ -113,7 +114,7 @@ let deletingContatoId = null;
 async function loadContatos() {
     contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Carregando...</td></tr>';
     try {
-        const data = await supabaseRequest('GET', '/rest/v1/formcontsite?order=created_at.desc&limit=500&_=' + Date.now());
+        const data = await supabaseRequest('GET', '/rest/v1/formcontsite?order=created_at.desc&limit=500');
         if (!data || data.length === 0) {
             contatosBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted-foreground);">Nenhum contato encontrado.</td></tr>';
             updateResultCount('contatos-count', 0);
