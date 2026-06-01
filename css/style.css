@@ -158,6 +158,25 @@ nav.main-nav {
   color: var(--gold);
 }
 
+/* Login link - discreto */
+.login-link {
+  color: rgba(255,255,255,0.4);
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 400;
+  transition: color var(--transition);
+  letter-spacing: 0.05em;
+}
+
+.login-link:hover {
+  color: rgba(255,255,255,0.7);
+}
+
+.mobile-nav .login-link {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.4);
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
