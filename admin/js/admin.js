@@ -55,7 +55,6 @@ async function supabaseRequest(method, path, body) {
         body: body ? JSON.stringify(body) : undefined
     });
     if (method === 'DELETE') {
-        console.log('DELETE response:', { status: res.status, ok: res.ok });
         if (!res.ok) {
             const text = await res.text().catch(() => '(no body)');
             throw new Error('DELETE failed: ' + res.status + ' ' + text);

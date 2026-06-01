@@ -45,6 +45,37 @@ O arquivo `httpd-proxy.conf` contém a config de reverse proxy do Apache (mod_pr
 
 Ver documentação detalhada em `MEDIA-PROXY.md`.
 
+## ⚠️ Padrão RLS (Row Level Security) no Supabase
+
+Sempre que adicionar uma operação nova (INSERT, UPDATE, DELETE) em qualquer tabela do Supabase
+que tenha **RLS ativado**, é necessário criar a política correspondente para o role `anon`.
+
+### Sintomas de RLS faltando
+- O request retorna HTTP 200/204 mas o dado não persiste/não é alterado
+- Nenhum erro é retornado — o PostgREST engole silenciosamente
+- Horas de debugging perdidas
+
+### Verificar políticas existentes
+```sql
+SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual
+FROM pg_policies
+WHERE tablename = 'nome_da_tabela';
+```
+
+### Criar política (padrão para admin)
+```sql
+CREATE POLICY anon_delete_nome_tabela ON nome_tabela
+  FOR DELETE TO anon USING (true);
+```
+
+### Regra de ouro
+Se o frontend/admin acessa a tabela via chave `anon` do Kong/Supabase,
+a política precisa existir para o role `anon`. A segurança de admin vem
+do fato de só o painel administrativo expor aquela funcionalidade.
+
+Tabelas conhecidas com RLS ativo:
+- `formcontsite` — SELECT (public), INSERT (anon), DELETE (anon)
+
 ## Acesso SSH (VPS)
 
 ```bash
