@@ -197,6 +197,13 @@
             });
             markersGroup.addLayer(marker);
         });
+
+        // Fit map to visible markers
+        const visibleMarkers = markersGroup.getLayers();
+        if (visibleMarkers.length > 0) {
+            const bounds = L.featureGroup(visibleMarkers).getBounds();
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+        }
     }
 
     if (searchInput) {
@@ -284,11 +291,19 @@
         setTimeout(() => map.invalidateSize(), 200);
     });
 
-    /* ---------- Saídas buttons (scroll + filter) ---------- */
+    /* ---------- Saídas buttons (scroll + filter + center) ---------- */
     document.querySelectorAll('.saida-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const terms = JSON.parse(btn.dataset.terms);
             filterByTerms(terms);
+
+            // Center map on region if coordinates are provided
+            const lat = parseFloat(btn.dataset.centerLat);
+            const lng = parseFloat(btn.dataset.centerLng);
+            const zoom = parseInt(btn.dataset.zoom, 10) || 11;
+            if (!isNaN(lat) && !isNaN(lng)) {
+                map.setView([lat, lng], zoom, { animate: true });
+            }
 
             // Scroll to map section
             const mapSection = document.getElementById('mapa-section');
