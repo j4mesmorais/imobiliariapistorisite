@@ -19,10 +19,12 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"></noscript>
     
     <!-- Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"></noscript>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="img/imgp/logoBase.png">
@@ -197,7 +199,7 @@
     <section id="sobre" class="about">
         <div class="container reveal">
             <div class="about-img-container">
-                <img src="https://img.usecurling.com/p/800/1000?q=woman%20nature%20office%20plants" alt="Nossa História" class="about-img">
+                <img src="https://img.usecurling.com/p/800/1000?q=woman%20nature%20office%20plants" alt="Nossa História" class="about-img" loading="lazy">
             </div>
             <div class="about-content">
                 <span style="color: var(--gold); text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; font-weight: 700; display: block; margin-bottom: 8px;">Nossa História</span>
@@ -288,7 +290,7 @@
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3821.789!2d-49.3013755!3d-16.6433569!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935ef524e2676689%3A0xec5bad95df168458!2sP%C3%A1tio%20Vitta!5e0!3m2!1spt-BR!2sbr!4v1"
                         width="100%" height="200" style="border:0; border-radius: 8px;"
-                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                        allowfullscreen="" referrerpolicy="no-referrer-when-downgrade" loading="lazy">
                     </iframe>
                 </div>
                 </div>
@@ -306,8 +308,8 @@
     </a>
 
     <!-- Scripts -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="js/mapa-section.js"></script>
-    <script src="js/app.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
+    <script src="js/mapa-section.js" defer></script>
+    <script src="js/app.js" defer></script>
 </body>
 </html>
