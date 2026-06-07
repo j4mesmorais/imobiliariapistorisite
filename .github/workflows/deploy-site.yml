@@ -18,13 +18,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Remove .git for SCP
+        run: rm -rf .git
+
       - name: Sync files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "*"
+          source: "."
           target: "/tmp/site-deploy"
           strip_components: 0
 
