@@ -260,12 +260,12 @@
 
     function getFallbackProperties() {
         return [
-            { id: 1, title: 'Quintas do Cerrado', desc: 'Chácaras acima de 1000 m²', price: 'R$ a partir de 290.000,00', lat: -16.6769904, lng: -49.6232455, image: 'img/QuintasCerrado.jpg', link: '#' },
-            { id: 2, title: 'Terra Vermelha', desc: 'Chácaras acima de 500 m²', price: 'R$ 680.000', lat: -16.4526819, lng: -49.31034345, image: 'img/IconeTerraVermelha.png', link: '#' },
-            { id: 3, title: 'Aldeia Santo Antônio', desc: 'Chácaras acima de 600 m²', price: 'R$ 680.000', lat: -16.4904629, lng: -49.27481865, image: 'img/AldeiaSantoAntonio.jpg', link: '#' },
-            { id: 4, title: 'Quintas das Araras', desc: '', price: 'R$ 680.000', lat: -16.9287313, lng: -49.25213065, image: 'img/QuintasAraras.png', link: '#' },
-            { id: 5, title: 'Quintas do Lago', desc: '', price: 'R$ 680.000', lat: -16.9172876, lng: -49.41646745, image: 'img/QuintasLago.jpg', link: '#' },
-            { id: 6, title: 'Casa Uvva', desc: '', price: 'R$ 680.000', lat: -16.7872097, lng: -49.1052104, image: 'img/CasaUva.png', link: '#' }
+            { id: 1, title: 'Quintas do Cerrado', desc: 'Chácaras acima de 1000 m²', price: 'R$ a partir de 290.000,00', lat: -16.6769904, lng: -49.6232455, image: 'img/imgp/QuintasCerradop.jpg', link: '#' },
+            { id: 2, title: 'Terra Vermelha', desc: 'Chácaras acima de 500 m²', price: 'R$ 680.000', lat: -16.4526819, lng: -49.31034345, image: 'img/imgp/IconeTerraVermelha.png', link: '#' },
+            { id: 3, title: 'Aldeia Santo Antônio', desc: 'Chácaras acima de 600 m²', price: 'R$ 680.000', lat: -16.4904629, lng: -49.27481865, image: 'img/imgp/AldeiaSantoAntonio.jpg', link: '#' },
+            { id: 4, title: 'Quintas das Araras', desc: '', price: 'R$ 680.000', lat: -16.9287313, lng: -49.25213065, image: 'img/imgp/QuintasAraras.jpg', link: '#' },
+            { id: 5, title: 'Quintas do Lago', desc: '', price: 'R$ 680.000', lat: -16.9172876, lng: -49.41646745, image: 'img/imgp/QuintasLago.jpg', link: '#' },
+            { id: 6, title: 'Casa Uvva', desc: '', price: 'R$ 680.000', lat: -16.7872097, lng: -49.1052104, image: 'img/imgp/CasaUva.jpg', link: '#' }
         ];
     }
 
