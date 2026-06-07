@@ -158,23 +158,50 @@ nav.main-nav {
   color: var(--gold);
 }
 
-/* Login link - discreto */
-.login-link {
-  color: rgba(255,255,255,0.4);
+/* Login/Entrar button */
+.btn-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
   text-decoration: none;
-  font-size: 0.75rem;
-  font-weight: 400;
-  transition: color var(--transition);
-  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--transition);
+  padding: 6px 14px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 6px;
+  background: rgba(212, 175, 55, 0.06);
 }
 
-.login-link:hover {
-  color: rgba(255,255,255,0.7);
+.btn-login:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
 }
 
-.mobile-nav .login-link {
+.btn-login i {
   font-size: 1rem;
-  color: rgba(255,255,255,0.4);
+}
+
+.btn-login-mobile {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.08);
+  transition: all var(--transition);
+}
+
+.btn-login-mobile:hover {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: rgba(212, 175, 55, 0.6);
 }
 
 /* Buttons */
