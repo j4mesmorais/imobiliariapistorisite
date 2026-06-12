@@ -140,7 +140,6 @@
 
   <script>
     // --- CONFIG ---
-    const SUPABASE_URL = 'https://supabase.imobiliariapistori.com.br';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
 
     const loadingEl = document.getElementById('loading');
@@ -180,7 +179,7 @@
 
     async function carregarProdutos() {
       try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/produtos?select=id,nome,slug,imagem_perfil&order=created_at`, {
+        const res = await fetch(`/supabase/rest/v1/produtos?select=id,nome,slug,imagem_perfil&order=created_at`, {
           headers: {
             'apikey': SUPABASE_ANON_KEY,
             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`

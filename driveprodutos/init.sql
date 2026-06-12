@@ -13,12 +13,12 @@ CREATE TABLE IF NOT EXISTS categorias (
 
 INSERT INTO categorias (nome, label, icone) VALUES
   ('gerente_vendas', 'Gerente de Vendas', 'briefcase'),
-  ('drive_google',    'Google Drive',    'link'),
-  ('localizacao',     'Localização',     'map-pin'),
-  ('documentos',      'Documentos',      'file-text'),
+  ('link',            'Link',              'link'),
+  ('localizacao',     'Localização',       'map-pin'),
+  ('documentos',      'Documentos',        'file-text'),
   ('info_adicionais', 'Informações Adicionais', 'info'),
-  ('imagens_videos',  'Imagens e Vídeos', 'image'),
-  ('outros',          'Outros',           'folder')
+  ('imagens_videos',  'Imagens e Vídeos',  'image'),
+  ('outros',          'Outros',            'folder')
 ON CONFLICT (nome) DO NOTHING;
 
 -- 2. Produtos
