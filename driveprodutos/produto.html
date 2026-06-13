@@ -233,6 +233,9 @@
   <script>
     // --- CONFIG ---
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
+    const SUPABASE_URL_BASE = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+      ? 'https://imobiliariapistori.com.br/supabase'
+      : '';
 
     const ICONES = {
       'gerente_vendas': '&#128100;',
@@ -414,7 +417,7 @@
       try {
         // Buscar produto
         const resProd = await fetch(
-          `/supabase/rest/v1/produtos?select=id,nome,slug,imagem_perfil&slug=eq.${encodeURIComponent(slug)}&limit=1`,
+          `${SUPABASE_URL_BASE}/rest/v1/produtos?select=id,nome,slug,imagem_perfil&slug=eq.${encodeURIComponent(slug)}&limit=1`,
           { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         if (!resProd.ok) throw new Error('Erro ao buscar produto');
@@ -433,13 +436,13 @@
 
         // Buscar categorias com os itens do produto
         const resCat = await fetch(
-          `/supabase/rest/v1/categorias?select=id,nome,label&order=id`,
+          `${SUPABASE_URL_BASE}/rest/v1/categorias?select=id,nome,label&order=id`,
           { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         const categorias = await resCat.json();
 
         const resItens = await fetch(
-          `/supabase/rest/v1/itens?select=id,tipo,conteudo,descricao,ordem,categoria_id&produto_id=eq.${produto.id}&order=ordem`,
+          `${SUPABASE_URL_BASE}/rest/v1/itens?select=id,tipo,conteudo,descricao,ordem,categoria_id&produto_id=eq.${produto.id}&order=ordem`,
           { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         const itens = await resItens.json();
