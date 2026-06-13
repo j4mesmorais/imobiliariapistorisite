@@ -309,32 +309,36 @@
           </div>
         `;
       }
-      if (tipo === 'link') {
+      if (tipo === 'localizacao') {
         const url = conteudo.startsWith('http') ? conteudo : 'https://' + conteudo;
-        // Detecta Google Maps link e renderiza embed do mapa
         const mapsMatch = url.match(/maps\.google\.com\/\?q=([-\d.]+),([-\d.]+)/);
+        let embedHtml = `<a href="${url}" target="_blank" rel="noopener">${conteudo}</a>`;
         if (mapsMatch) {
           const lat = mapsMatch[1];
           const lng = mapsMatch[2];
           const embedSrc = `https://www.google.com/maps?q=${lat},${lng}&output=embed&z=15`;
-          return `
-            <div class="item">
-              ${descricao ? `<div class="item-label">${descricao}</div>` : ''}
-              <div class="item-conteudo">
-                <iframe src="${embedSrc}"
-                  width="100%" height="250"
-                  style="border:0;border-radius:8px"
-                  loading="lazy"
-                  referrerpolicy="no-referrer-when-downgrade"
-                  allowfullscreen>
-                </iframe>
-                <div style="margin-top:0.4rem;font-size:0.85rem">
-                  <a href="${url}" target="_blank" rel="noopener">Abrir no Google Maps &nearr;</a>
-                </div>
-              </div>
+          embedHtml = `
+            <iframe src="${embedSrc}"
+              width="100%" height="250"
+              style="border:0;border-radius:8px"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen>
+            </iframe>
+            <div style="margin-top:0.4rem;font-size:0.85rem">
+              <a href="${url}" target="_blank" rel="noopener">Abrir no Google Maps &nearr;</a>
             </div>
           `;
         }
+        return `
+          <div class="item">
+            ${descricao ? `<div class="item-label">${descricao}</div>` : ''}
+            <div class="item-conteudo">${embedHtml}</div>
+          </div>
+        `;
+      }
+      if (tipo === 'link') {
+        const url = conteudo.startsWith('http') ? conteudo : 'https://' + conteudo;
         return `
           <div class="item">
             ${descricao ? `<div class="item-label">${descricao}</div>` : ''}
