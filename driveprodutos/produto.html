@@ -238,7 +238,7 @@
       : '';
 
     const ICONES = {
-      'gerente_vendas': '&#128100;',
+      'contatos': '&#128100;',
       'link': '&#128279;',
       'localizacao': '&#128205;',
       'documentos': '&#128196;',
@@ -254,6 +254,8 @@
     const perfilContainer = document.getElementById('perfil-container');
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
+
+    let imagensReveladas = false;
 
     function getParams() {
       const p = new URLSearchParams(location.search);
@@ -280,10 +282,28 @@
       const descricao = item.descricao || '';
 
       if (tipo === 'imagem') {
+        if (imagensReveladas) {
+          return `
+            <div class="item">
+              <div class="galeria" style="margin-top:0">
+                <img src="${conteudo}" alt="${descricao || 'Imagem'}" loading="lazy"
+                     onclick="event.stopPropagation(); abrirLightbox('${conteudo}')">
+              </div>
+              ${descricao ? `<div style="font-size:0.85rem;color:#718096;margin-top:0.25rem">${descricao}</div>` : ''}
+            </div>
+          `;
+        }
         return `
           <div class="item">
             <div class="galeria" style="margin-top:0">
-              <img src="${conteudo}" alt="${descricao || 'Imagem'}" loading="lazy"
+              <div onclick="this.nextElementSibling.src=this.dataset.src; this.nextElementSibling.style.display='block'; this.style.display='none';"
+                   data-src="${conteudo}"
+                   style="background:#edf2f7;border-radius:8px;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#a0aec0;font-size:0.85rem;text-align:center;padding:1rem;border:2px dashed #d2d6dc;transition:background 0.15s;"
+                   onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#edf2f7'">
+                &#128247; Clique para revelar imagem
+              </div>
+              <img src="" alt="${descricao || 'Imagem'}" loading="lazy"
+                   style="display:none"
                    onclick="event.stopPropagation(); abrirLightbox('${conteudo}')">
             </div>
             ${descricao ? `<div style="font-size:0.85rem;color:#718096;margin-top:0.25rem">${descricao}</div>` : ''}
@@ -371,13 +391,33 @@
       `;
     }
 
+    function revealAllImages() {
+      imagensReveladas = true;
+      document.getElementById('reveal-btn').style.display = 'none';
+      // Re-render categorias to show images
+      const categoriasData = window._categoriasData;
+      if (categoriasData) renderCategorias(categoriasData);
+    }
+
     function renderCategorias(categorias) {
       if (!categorias || categorias.length === 0) {
         categoriasEl.innerHTML = '<div class="erro">Nenhuma informação cadastrada para este produto.</div>';
         return;
       }
 
-      categoriasEl.innerHTML = categorias.map((cat, idx) => {
+      const hasImages = categorias.some(cat => cat.itens.some(i => i.tipo === 'imagem'));
+
+      categoriasEl.innerHTML = (hasImages && !imagensReveladas
+        ? `<div style="text-align:center;margin-bottom:1rem">
+            <button id="reveal-btn" onclick="revealAllImages()"
+              style="background:#667eea;color:#fff;border:none;padding:0.75rem 2rem;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:600;transition:background 0.15s;"
+              onmouseover="this.style.background='#5a67d8'" onmouseout="this.style.background='#667eea'">
+              &#128247; Revelar imagens
+            </button>
+            <p style="color:#a0aec0;font-size:0.8rem;margin-top:0.5rem">As imagens estão ocultas para manter a página leve.</p>
+          </div>`
+        : ''
+      ) + categorias.map((cat, idx) => {
         const icone = ICONES[cat.nome] || '&#128193;';
         const isCollapsed = cat.itens.length === 0 ? 'collapsed' : '';
         return `
@@ -459,6 +499,7 @@
           itens: itensPorCat[c.id] || []
         }));
 
+        window._categoriasData = catsComItens;
         renderCategorias(catsComItens);
       } catch (err) {
         erroEl.textContent = err.message;

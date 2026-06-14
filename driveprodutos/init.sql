@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS categorias (
 );
 
 INSERT INTO categorias (nome, label, icone) VALUES
-  ('gerente_vendas', 'Gerente de Vendas', 'briefcase'),
+  ('contatos', 'Contatos', 'briefcase'),
   ('link',            'Link',              'link'),
   ('localizacao',     'Localização',       'map-pin'),
   ('documentos',      'Documentos',        'file-text'),
