@@ -316,10 +316,11 @@
       if (tipo === 'localizacao') {
         const url = conteudo.startsWith('http') ? conteudo : 'https://' + conteudo;
         const mapsMatch = url.match(/(?:maps\.google\.com|google\.com\/maps)\/?\?q=([-\d.]+),([-\d.]+)/);
+        const mapsAtMatch = url.match(/@([-\d.]+),([-\d.]+)/);
         let embedHtml;
-        if (mapsMatch) {
-          const lat = mapsMatch[1];
-          const lng = mapsMatch[2];
+        if (mapsMatch || mapsAtMatch) {
+          const lat = mapsMatch ? mapsMatch[1] : mapsAtMatch[1];
+          const lng = mapsMatch ? mapsMatch[2] : mapsAtMatch[2];
           const embedSrc = `https://www.google.com/maps?q=${lat},${lng}&output=embed&z=15`;
           embedHtml = `
             <iframe src="${embedSrc}"
