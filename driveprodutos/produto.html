@@ -315,13 +315,20 @@
       }
       if (tipo === 'localizacao') {
         const url = conteudo.startsWith('http') ? conteudo : 'https://' + conteudo;
-        const mapsMatch = url.match(/(?:maps\.google\.com|google\.com\/maps)\/?\?q=([-\d.]+),([-\d.]+)/);
-        const mapsAtMatch = url.match(/@([-\d.]+),([-\d.]+)/);
+        const mapsCoord = url.match(/(?:maps\.google\.com|google\.com\/maps)\/?\?q=([-\d.]+),([-\d.]+)/);
+        const mapsAt = url.match(/@([-\d.]+),([-\d.]+)/);
+        const mapsText = url.match(/[?&]q=([^&]+)/);
         let embedHtml;
-        if (mapsMatch || mapsAtMatch) {
-          const lat = mapsMatch ? mapsMatch[1] : mapsAtMatch[1];
-          const lng = mapsMatch ? mapsMatch[2] : mapsAtMatch[2];
-          const embedSrc = `https://www.google.com/maps?q=${lat},${lng}&output=embed&z=15`;
+        let embedSrc = '';
+        if (mapsCoord) {
+          embedSrc = `https://www.google.com/maps?q=${mapsCoord[1]},${mapsCoord[2]}&output=embed&z=15`;
+        } else if (mapsAt) {
+          embedSrc = `https://www.google.com/maps?q=${mapsAt[1]},${mapsAt[2]}&output=embed&z=15`;
+        } else if (mapsText) {
+          const q = decodeURIComponent(mapsText[1].replace(/\+/g, ' '));
+          embedSrc = `https://www.google.com/maps?q=${encodeURIComponent(q)}&output=embed&z=15`;
+        }
+        if (embedSrc) {
           embedHtml = `
             <iframe src="${embedSrc}"
               width="100%" height="250"
