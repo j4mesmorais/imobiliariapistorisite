@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Produto - Imobiliária Pistori</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -233,9 +236,7 @@
   <script>
     // --- CONFIG ---
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.Bo7sSl2Nv7Gb3vzOAPYesu83kkZc1oz-cHe_EMslt00';
-    const SUPABASE_URL_BASE = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
-      ? 'https://imobiliariapistori.com.br/supabase'
-      : '';
+    const SUPABASE_URL_BASE = 'https://imobiliariapistori.com.br/supabase';
 
     const ICONES = {
       'contatos': '&#128100;',
@@ -243,7 +244,7 @@
       'localizacao': '&#128205;',
       'documentos': '&#128196;',
       'info_adicionais': '&#8505;',
-      'imagens_videos': '&#128247;',
+      'imagens_videos': '&#128247;',  // camera
       'outros': '&#128193;'
     };
 
@@ -254,8 +255,6 @@
     const perfilContainer = document.getElementById('perfil-container');
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
-
-    let imagensReveladas = false;
 
     function getParams() {
       const p = new URLSearchParams(location.search);
@@ -282,28 +281,10 @@
       const descricao = item.descricao || '';
 
       if (tipo === 'imagem') {
-        if (imagensReveladas) {
-          return `
-            <div class="item">
-              <div class="galeria" style="margin-top:0">
-                <img src="${conteudo}" alt="${descricao || 'Imagem'}" loading="lazy"
-                     onclick="event.stopPropagation(); abrirLightbox('${conteudo}')">
-              </div>
-              ${descricao ? `<div style="font-size:0.85rem;color:#718096;margin-top:0.25rem">${descricao}</div>` : ''}
-            </div>
-          `;
-        }
         return `
           <div class="item">
             <div class="galeria" style="margin-top:0">
-              <div onclick="this.nextElementSibling.src=this.dataset.src; this.nextElementSibling.style.display='block'; this.style.display='none';"
-                   data-src="${conteudo}"
-                   style="background:#edf2f7;border-radius:8px;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#a0aec0;font-size:0.85rem;text-align:center;padding:1rem;border:2px dashed #d2d6dc;transition:background 0.15s;"
-                   onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#edf2f7'">
-                &#128247; Clique para revelar imagem
-              </div>
-              <img src="" alt="${descricao || 'Imagem'}" loading="lazy"
-                   style="display:none"
+              <img src="${conteudo}" alt="${descricao || 'Imagem'}" loading="lazy"
                    onclick="event.stopPropagation(); abrirLightbox('${conteudo}')">
             </div>
             ${descricao ? `<div style="font-size:0.85rem;color:#718096;margin-top:0.25rem">${descricao}</div>` : ''}
@@ -334,8 +315,8 @@
       }
       if (tipo === 'localizacao') {
         const url = conteudo.startsWith('http') ? conteudo : 'https://' + conteudo;
-        const mapsMatch = url.match(/maps\.google\.com\/\?q=([-\d.]+),([-\d.]+)/);
-        let embedHtml = `<a href="${url}" target="_blank" rel="noopener">${conteudo}</a>`;
+        const mapsMatch = url.match(/(?:maps\.google\.com|google\.com\/maps)\/?\?q=([-\d.]+),([-\d.]+)/);
+        let embedHtml;
         if (mapsMatch) {
           const lat = mapsMatch[1];
           const lng = mapsMatch[2];
@@ -351,6 +332,13 @@
             <div style="margin-top:0.4rem;font-size:0.85rem">
               <a href="${url}" target="_blank" rel="noopener">Abrir no Google Maps &nearr;</a>
             </div>
+          `;
+        } else {
+          embedHtml = `
+            <a href="${url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1rem;background:#e8f4fd;border-radius:8px;color:#1a73e8;font-weight:500;text-decoration:none;">
+              <span style="font-size:1.2rem">&#128205;</span>
+              Ver localização no Google Maps &nearr;
+            </a>
           `;
         }
         return `
@@ -391,47 +379,52 @@
       `;
     }
 
-    function revealAllImages() {
-      imagensReveladas = true;
-      document.getElementById('reveal-btn').style.display = 'none';
-      // Re-render categorias to show images
-      const categoriasData = window._categoriasData;
-      if (categoriasData) renderCategorias(categoriasData);
-    }
+    const categoriasReveladas = new Set();
 
     function renderCategorias(categorias) {
       if (!categorias || categorias.length === 0) {
-        categoriasEl.innerHTML = '<div class="erro">Nenhuma informação cadastrada para este produto.</div>';
-        return;
+        return '<div class="erro">Nenhuma informação cadastrada para este produto.</div>';
       }
 
-      const hasImages = categorias.some(cat => cat.itens.some(i => i.tipo === 'imagem'));
-
-      categoriasEl.innerHTML = (hasImages && !imagensReveladas
-        ? `<div style="text-align:center;margin-bottom:1rem">
-            <button id="reveal-btn" onclick="revealAllImages()"
-              style="background:#667eea;color:#fff;border:none;padding:0.75rem 2rem;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:600;transition:background 0.15s;"
-              onmouseover="this.style.background='#5a67d8'" onmouseout="this.style.background='#667eea'">
-              &#128247; Revelar imagens
-            </button>
-            <p style="color:#a0aec0;font-size:0.8rem;margin-top:0.5rem">As imagens estão ocultas para manter a página leve.</p>
-          </div>`
-        : ''
-      ) + categorias.map((cat, idx) => {
+      return categorias.map((cat) => {
         const icone = ICONES[cat.nome] || '&#128193;';
-        const isCollapsed = cat.itens.length === 0 ? 'collapsed' : '';
+        const temMidia = !categoriasReveladas.has(cat.id) && cat.itens.some(i => i.tipo === 'imagem' || i.tipo === 'video');
+        const isCollapsed = (temMidia || cat.itens.length === 0) ? 'collapsed' : '';
+
+        // Agrupar itens de mídia (imagem/video) em galeria, resto usa renderItem
+        let bodyHtml = '';
+        if (cat.itens.length === 0) {
+          bodyHtml = '<p style="color:#a0aec0;font-size:0.9rem">Nenhum item cadastrado.</p>';
+        } else if (temMidia) {
+          bodyHtml = '<p style="color:#a0aec0;font-size:0.9rem">Clique para carregar imagens e vídeos...</p>';
+        } else {
+          const mediaItems = cat.itens.filter(i => i.tipo === 'imagem' || i.tipo === 'video');
+          const outrosItems = cat.itens.filter(i => i.tipo !== 'imagem' && i.tipo !== 'video');
+          const partes = [];
+          if (mediaItems.length > 0) {
+            const mediaHtml = mediaItems.map(i => {
+              if (i.tipo === 'imagem') {
+                return `<img src="${i.conteudo}" alt="${i.descricao || 'Imagem'}" loading="lazy" onclick="event.stopPropagation(); abrirLightbox('${i.conteudo}')">`;
+              }
+              return `<video src="${i.conteudo}" controls preload="metadata" style="width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:8px;cursor:pointer;background:#edf2f7;"></video>`;
+            }).join('');
+            partes.push(`<div class="item"><div class="galeria" style="margin-top:0">${mediaHtml}</div></div>`);
+          }
+          if (outrosItems.length > 0) {
+            partes.push(outrosItems.map(i => renderItem(i)).join(''));
+          }
+          bodyHtml = partes.join('');
+        }
+
         return `
-          <div class="categoria">
+          <div class="categoria" data-cat-id="${cat.id}">
             <div class="categoria-header" onclick="toggleCategoria(this)">
               <span class="icone">${icone}</span>
               <h2>${cat.label}</h2>
               <span class="seta ${isCollapsed ? '' : 'aberta'}">&#9660;</span>
             </div>
             <div class="categoria-body ${isCollapsed}">
-              ${cat.itens.length === 0
-                ? '<p style="color:#a0aec0;font-size:0.9rem">Nenhum item cadastrado.</p>'
-                : cat.itens.map(i => renderItem(i)).join('')
-              }
+              ${bodyHtml}
             </div>
           </div>
         `;
@@ -441,6 +434,28 @@
     function toggleCategoria(headerEl) {
       const body = headerEl.nextElementSibling;
       const seta = headerEl.querySelector('.seta');
+
+      // Se collapsed e tem midia ainda nao revelada, revela ao abrir
+      if (body.classList.contains('collapsed')) {
+        const catEl = headerEl.closest('.categoria');
+        const catId = catEl.dataset.catId;
+        const categoriasData = window._categoriasData;
+        if (catId && categoriasData) {
+          const cat = categoriasData.find(c => c.id == catId);
+          if (cat && !categoriasReveladas.has(cat.id) && cat.itens.some(i => i.tipo === 'imagem' || i.tipo === 'video')) {
+            categoriasReveladas.add(cat.id);
+            const novaRender = renderCategorias(categoriasData);
+            categoriasEl.innerHTML = novaRender;
+            // Re-abre a categoria que foi clicada
+            const novoBody = categoriasEl.querySelector(`[data-cat-id="${cat.id}"] .categoria-body`);
+            const novaSeta = categoriasEl.querySelector(`[data-cat-id="${cat.id}"] .seta`);
+            if (novoBody) novoBody.classList.remove('collapsed');
+            if (novaSeta) novaSeta.classList.add('aberta');
+            return;
+          }
+        }
+      }
+
       body.classList.toggle('collapsed');
       seta.classList.toggle('aberta');
     }
@@ -500,7 +515,7 @@
         }));
 
         window._categoriasData = catsComItens;
-        renderCategorias(catsComItens);
+        categoriasEl.innerHTML = renderCategorias(catsComItens);
       } catch (err) {
         erroEl.textContent = err.message;
         erroEl.style.display = 'block';
