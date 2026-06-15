@@ -367,16 +367,19 @@
         `;
       }
       if (tipo === 'contato') {
+        console.log('RENDER CONTATO:', { tipo, conteudo: conteudo?.substring(0, 200), descricao });
         // Parse vcard — extrai nome e TODOS os telefones
         const fnMatch = conteudo.match(/FN[:](.+)/);
         const nomeContato = fnMatch ? fnMatch[1].trim() : (descricao || 'Contato');
         // Extrai todas as linhas TEL
         const telLines = conteudo.match(/TEL[^:]*:[\+ ]?([^\r\n]+)/g) || [];
+        console.log('TEL lines found:', telLines);
         const telefones = telLines.map(line => {
           const raw = line.replace(/^TEL[^:]*:[\+ ]?/, '').trim();
           const digits = raw.replace(/[\s\-\(\)]/g, '');
           return digits ? { display: '+' + digits, wa: digits } : null;
         }).filter(Boolean);
+        console.log('Parsed phones:', telefones);
         return `
           <div class="item contato">
             <div class="contato-card">
