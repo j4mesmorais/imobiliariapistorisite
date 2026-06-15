@@ -170,25 +170,33 @@
       color: #4a5568;
       margin-top: 0.1rem;
     }
-    .contato-whatsapp {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #25D366;
+    .contato-tel-linha {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+      padding: 0.25rem 0;
+    }
+    .contato-tel-linha + .contato-tel-linha {
+      border-top: 1px solid #e2e8f0;
+    }
+    .contato-tel-whatsapp {
+      display: inline-flex;
+      align-items: center;
       justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #25D366;
       text-decoration: none;
+      font-size: 1rem;
       flex-shrink: 0;
       transition: transform 0.15s, box-shadow 0.15s;
     }
-    .contato-whatsapp:hover {
-      transform: scale(1.1);
-      box-shadow: 0 2px 12px rgba(37, 211, 102, 0.4);
-    }
-    .contato-whatsapp-icone {
-      font-size: 1.3rem;
-      line-height: 1;
+    .contato-tel-whatsapp:hover {
+      transform: scale(1.15);
+      box-shadow: 0 2px 10px rgba(37, 211, 102, 0.4);
     }
     /* Galeria de imagens */
     .galeria {
@@ -359,27 +367,30 @@
         `;
       }
       if (tipo === 'contato') {
-        // Parse vcard
-        // Extrair telefone: procura TEL;TYPE=CELL e captura dígitos
-        const telMatch = conteudo.match(/TEL[^:]*:[\+ ]?([\d\s\-\(\)]+)/);
+        // Parse vcard — extrai nome e TODOS os telefones
         const fnMatch = conteudo.match(/FN[:](.+)/);
-        const telefoneRaw = telMatch ? telMatch[1].trim() : '';
-        const telefoneFormatado = telefoneRaw ? '+' + telefoneRaw.replace(/[\s\-\(\)]/g, '') : '';
         const nomeContato = fnMatch ? fnMatch[1].trim() : (descricao || 'Contato');
-        const telefoneLink = telefoneFormatado.replace(/\D/g, '');
+        // Extrai todas as linhas TEL
+        const telLines = conteudo.match(/TEL[^:]*:[\+ ]?([^\r\n]+)/g) || [];
+        const telefones = telLines.map(line => {
+          const raw = line.replace(/^TEL[^:]*:[\+ ]?/, '').trim();
+          const digits = raw.replace(/[\s\-\(\)]/g, '');
+          return digits ? { display: '+' + digits, wa: digits } : null;
+        }).filter(Boolean);
         return `
           <div class="item contato">
             <div class="contato-card">
               <div class="contato-avatar">${getInitials(nomeContato)}</div>
               <div class="contato-dados">
                 <div class="contato-nome">${nomeContato}</div>
-                ${telefoneFormatado ? `<div class="contato-tel">${telefoneFormatado}</div>` : ''}
+                ${telefones.map(t => `
+                  <div class="contato-tel-linha">
+                    <span class="contato-tel">${t.display}</span>
+                    <a class="contato-tel-whatsapp" href="https://wa.me/${t.wa}" target="_blank" rel="noopener" title="Conversar no WhatsApp">&#128172;</a>
+                  </div>
+                `).join('')}
+                ${telefones.length === 0 ? '<div class="contato-tel" style="color:#a0aec0">Sem telefone</div>' : ''}
               </div>
-              ${telefoneLink ? `
-                <a class="contato-whatsapp" href="https://wa.me/${telefoneLink}" target="_blank" rel="noopener" title="Conversar no WhatsApp">
-                  <span class="contato-whatsapp-icone">&#128172;</span>
-                </a>
-              ` : ''}
             </div>
           </div>
         `;
