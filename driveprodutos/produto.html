@@ -465,13 +465,20 @@
         `;
       }
       if (tipo === 'arquivo') {
+        const nomeArquivo = descricao || conteudo.split('/').pop() || 'Documento';
+        const isPdf = nomeArquivo.toLowerCase().endsWith('.pdf');
+        const icone = isPdf
+          ? '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="4" fill="#E53E3E"/><path d="M8 6h10l6 6v16a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2z" fill="#FC8181"/><path d="M18 6v6h6" fill="#E53E3E"/><text x="12" y="24" font-size="9" font-weight="bold" fill="white" font-family="Arial">PDF</text></svg>'
+          : '<div style="width:32px;height:32px;border-radius:4px;background:#A0AEC0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;font-weight:700">&#128206;</div>';
         return `
           <div class="item">
-            <div class="item-conteudo">
-              <a href="${conteudo}" target="_blank" rel="noopener">
-                ${descricao || conteudo.split('/').pop() || 'Baixar arquivo'}
-              </a>
-            </div>
+            <a href="${conteudo}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem;border-radius:8px;text-decoration:none;color:inherit;transition:background 0.15s;" onmouseover="this.style.background='#f7fafc'" onmouseout="this.style.background='transparent'">
+              ${icone}
+              <div style="flex:1;min-width:0">
+                <div style="font-size:0.9rem;font-weight:500;color:#2d3748;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nomeArquivo}</div>
+                <div style="font-size:0.75rem;color:#a0aec0">${isPdf ? 'PDF' : 'Documento'} &nearr;</div>
+              </div>
+            </a>
           </div>
         `;
       }
