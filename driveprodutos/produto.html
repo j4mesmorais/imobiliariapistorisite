@@ -360,18 +360,20 @@
       }
       if (tipo === 'contato') {
         // Parse vcard
-        const telMatch = conteudo.match(/TEL[^:]*:\+?([\d]+)/);
+        // Extrair telefone: procura TEL;TYPE=CELL e captura dígitos
+        const telMatch = conteudo.match(/TEL[^:]*:[\+ ]?([\d\s\-\(\)]+)/);
         const fnMatch = conteudo.match(/FN[:](.+)/);
-        const telefone = telMatch ? '+' + telMatch[1] : '';
+        const telefoneRaw = telMatch ? telMatch[1].trim() : '';
+        const telefoneFormatado = telefoneRaw ? '+' + telefoneRaw.replace(/[\s\-\(\)]/g, '') : '';
         const nomeContato = fnMatch ? fnMatch[1].trim() : (descricao || 'Contato');
-        const telefoneLink = telefone.replace(/\D/g, '');
+        const telefoneLink = telefoneFormatado.replace(/\D/g, '');
         return `
           <div class="item contato">
             <div class="contato-card">
               <div class="contato-avatar">${getInitials(nomeContato)}</div>
               <div class="contato-dados">
                 <div class="contato-nome">${nomeContato}</div>
-                ${telefone ? `<div class="contato-tel">${telefone}</div>` : ''}
+                ${telefoneFormatado ? `<div class="contato-tel">${telefoneFormatado}</div>` : ''}
               </div>
               ${telefoneLink ? `
                 <a class="contato-whatsapp" href="https://wa.me/${telefoneLink}" target="_blank" rel="noopener" title="Conversar no WhatsApp">
