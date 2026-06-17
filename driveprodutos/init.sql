@@ -36,11 +36,13 @@ CREATE TABLE IF NOT EXISTS itens (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   produto_id UUID NOT NULL REFERENCES produtos(id) ON DELETE CASCADE,
   categoria_id UUID NOT NULL REFERENCES categorias(id),
-  tipo TEXT NOT NULL CHECK (tipo IN ('texto','link','arquivo','imagem','video','whatsapp')),
+  tipo TEXT NOT NULL CHECK (tipo IN ('texto','link','arquivo','imagem','video','whatsapp','localizacao','contato')),
   conteudo TEXT NOT NULL,
   descricao TEXT DEFAULT '',
   ordem INT DEFAULT 0,
   origem TEXT DEFAULT 'manual',
+  whatsapp_msg_id TEXT DEFAULT '',              -- key.id da mensagem original no WhatsApp
+  anexos JSONB DEFAULT '[]',                    -- array de replies anexadas: [{"texto": "..."}]
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -62,4 +64,5 @@ CREATE TRIGGER trigger_update_produtos
 -- 5. Indices
 CREATE INDEX IF NOT EXISTS idx_itens_produto ON itens(produto_id);
 CREATE INDEX IF NOT EXISTS idx_itens_categoria ON itens(categoria_id);
+CREATE INDEX IF NOT EXISTS idx_itens_whatsapp_msg_id ON itens(whatsapp_msg_id);
 CREATE INDEX IF NOT EXISTS idx_produtos_slug ON produtos(slug);

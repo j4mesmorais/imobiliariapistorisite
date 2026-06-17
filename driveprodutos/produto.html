@@ -133,6 +133,15 @@
       color: #25D366;
       font-weight: 500;
     }
+    .item-anexo {
+      font-size: 0.85rem;
+      color: #4a5568;
+      padding: 0.4rem 0.75rem;
+      margin-top: 0.5rem;
+      border-left: 3px solid #cbd5e0;
+      background: #f7fafc;
+      border-radius: 0 4px 4px 0;
+    }
     /* Contato card */
     .contato-card {
       display: flex;
@@ -340,6 +349,13 @@
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharLightbox(); });
 
+    function renderAnexos(anexos) {
+      if (!anexos || anexos.length === 0) return '';
+      return anexos.map(a =>
+        `<div class="item-anexo">${a.texto}</div>`
+      ).join('');
+    }
+
     function renderItem(item, ordem) {
       const tipo = item.tipo;
       const conteudo = item.conteudo;
@@ -353,6 +369,7 @@
                    onclick="event.stopPropagation(); abrirLightbox('${conteudo}')">
             </div>
             ${descricao ? `<div style="font-size:0.85rem;color:#718096;margin-top:0.25rem">${descricao}</div>` : ''}
+            ${renderAnexos(item.anexos)}
           </div>
         `;
       }
@@ -363,6 +380,7 @@
                    style="width:100%;max-height:400px;border-radius:8px;background:#000;">
             </video>
             ${descricao ? `<div style="font-size:0.85rem;color:#718096;margin-top:0.25rem">${descricao}</div>` : ''}
+            ${renderAnexos(item.anexos)}
           </div>
         `;
       }
@@ -395,6 +413,7 @@
                 ${telefones.length === 0 ? '<div class="contato-tel" style="color:#a0aec0">Sem telefone</div>' : ''}
               </div>
             </div>
+            ${renderAnexos(item.anexos)}
           </div>
         `;
       }
@@ -407,6 +426,7 @@
                 ${descricao || conteudo}
               </a>
             </div>
+            ${renderAnexos(item.anexos)}
           </div>
         `;
       }
@@ -450,6 +470,7 @@
           <div class="item">
             ${descricao ? `<div class="item-label">${descricao}</div>` : ''}
             <div class="item-conteudo">${embedHtml}</div>
+            ${renderAnexos(item.anexos)}
           </div>
         `;
       }
@@ -461,6 +482,7 @@
             <div class="item-conteudo">
               <a href="${url}" target="_blank" rel="noopener">${conteudo}</a>
             </div>
+            ${renderAnexos(item.anexos)}
           </div>
         `;
       }
@@ -479,6 +501,7 @@
                 <div style="font-size:0.75rem;color:#a0aec0">${isPdf ? 'PDF' : 'Documento'} &nearr;</div>
               </div>
             </a>
+            ${renderAnexos(item.anexos)}
           </div>
         `;
       }
@@ -487,6 +510,7 @@
         <div class="item">
           ${descricao ? `<div class="item-label">${descricao}</div>` : ''}
           <div class="item-conteudo">${conteudo}</div>
+          ${renderAnexos(item.anexos)}
         </div>
       `;
     }
@@ -609,7 +633,7 @@
         const categorias = await resCat.json();
 
         const resItens = await fetch(
-          `${SUPABASE_URL_BASE}/rest/v1/itens?select=id,tipo,conteudo,descricao,ordem,categoria_id&produto_id=eq.${produto.id}&order=ordem`,
+          `${SUPABASE_URL_BASE}/rest/v1/itens?select=id,tipo,conteudo,descricao,ordem,categoria_id,anexos&produto_id=eq.${produto.id}&order=ordem`,
           { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
         );
         const itens = await resItens.json();
