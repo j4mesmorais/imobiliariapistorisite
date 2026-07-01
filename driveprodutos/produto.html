@@ -540,7 +540,8 @@
           if (mediaItems.length > 0) {
             const mediaHtml = mediaItems.map(i => {
               if (i.tipo === 'imagem') {
-                return `<img src="${i.conteudo}" alt="${i.descricao || 'Imagem'}" loading="lazy" onclick="event.stopPropagation(); abrirLightbox('${i.conteudo}')">`;
+                const img = `<img src="${i.conteudo}" alt="${i.descricao || 'Imagem'}" loading="lazy" onclick="event.stopPropagation(); abrirLightbox('${i.conteudo}')">`;
+                return i.descricao ? `<div>${img}<div style="font-size:0.85rem;color:#718096;margin-top:0.25rem">${i.descricao}</div></div>` : img;
               }
               return `<video src="${i.conteudo}" controls preload="metadata" style="width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:8px;cursor:pointer;background:#edf2f7;"></video>`;
             }).join('');
